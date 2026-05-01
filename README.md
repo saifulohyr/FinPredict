@@ -69,4 +69,4 @@ Proyek ini telah melewati audit keamanan awal yang mencakup:
 This project is for educational purposes as part of a Capstone Project.
 
 ---
-Developed with ❤️ by [Saiful](https://github.com/saifulohyr)
+<!-- Developed with ❤️ by [Saifuloh](https://github.com/saifulohyr) -->
