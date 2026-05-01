@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from "express";
 
-// 404 Not Found Handler
 export const notFoundHandler = (_req: Request, res: Response) => {
   res.status(404).json({
     status: "error",
@@ -8,7 +7,6 @@ export const notFoundHandler = (_req: Request, res: Response) => {
   });
 };
 
-// Global Error Handler
 export const errorHandler = (
   err: Error,
   _req: Request,
