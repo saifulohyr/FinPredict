@@ -1,3 +1,4 @@
+// Configuration for Prisma Client and Database Connection
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,38 +9,109 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-model Profile {
-  id         String   @id @default(uuid()) @db.Uuid
-  full_name  String?
-  avatar_url String?
-  updated_at DateTime @updatedAt
+// Enums for strict data validation
+enum CategoryType {
+  INCOME
+  EXPENSE
 }
 
+enum NotificationType {
+  INFO
+  WARNING
+  DANGER
+}
+
+// 1. User Profile (Extension of Supabase Auth)
+model Profile {
+  id           String         @id @db.Uuid
+  full_name    String?
+  avatar_url   String?
+  created_at   DateTime       @default(now())
+  updated_at   DateTime       @updatedAt
+  
+  // Relations
+  transactions Transaction[]
+  budgets      Budget[]
+  predictions  AiPrediction[]
+  notifications Notification[]
+
+  @@map("profiles")
+}
+
+// 2. Transaction Categories
 model Category {
   id           Int           @id @default(autoincrement())
   name         String
-  type         String        // e.g., 'income', 'expense'
+  type         CategoryType
+  icon         String?       // Identifier for frontend icons (e.g., Lucide/FontAwesome)
+  
+  // Relations
   transactions Transaction[]
   budgets      Budget[]
+
+  @@map("categories")
 }
 
+// 3. Financial Transactions (Core Data for AI LSTM)
 model Transaction {
   id               String   @id @default(uuid()) @db.Uuid
   user_id          String   @db.Uuid
   category_id      Int
-  amount           Decimal  @db.Decimal(10, 2)
-  transaction_date DateTime
+  amount           Decimal  @db.Decimal(15, 2)
+  transaction_date DateTime @db.Date
   description      String?
+  created_at       DateTime @default(now())
 
-  category         Category @relation(fields: [category_id], references: [id])
+  // Relations
+  user     Profile  @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [category_id], references: [id])
+
+  @@map("transactions")
 }
 
+// 4. Monthly Budgets (For Early Warning System)
 model Budget {
-  id            Int      @id @default(autoincrement())
+  id            String   @id @default(uuid()) @db.Uuid
   user_id       String   @db.Uuid
   category_id   Int
-  monthly_limit Decimal  @db.Decimal(10, 2)
-  month_year    DateTime
+  monthly_limit Decimal  @db.Decimal(15, 2)
+  month_year    DateTime @db.Date // Store as the first day of the month
+  created_at    DateTime @default(now())
 
-  category      Category @relation(fields: [category_id], references: [id])
+  // Relations
+  user     Profile  @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [category_id], references: [id])
+
+  @@map("budgets")
+}
+
+// 5. AI Forecasting Results (LSTM Output Cache)
+model AiPrediction {
+  id               String   @id @default(uuid()) @db.Uuid
+  user_id          String   @db.Uuid
+  forecast_date    DateTime @db.Date
+  predicted_amount Decimal  @db.Decimal(15, 2)
+  confidence_score Float?   // Accuracy metric from Python FastAPI
+  generated_at     DateTime @default(now())
+
+  // Relations
+  user Profile @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("ai_predictions")
+}
+
+// 6. System Notifications (Early Warning Alerts)
+model Notification {
+  id         String           @id @default(uuid()) @db.Uuid
+  user_id    String           @db.Uuid
+  title      String
+  message    String
+  type       NotificationType @default(INFO)
+  is_read    Boolean          @default(false)
+  created_at DateTime         @default(now())
+
+  // Relations
+  user Profile @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
 }

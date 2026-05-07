@@ -18,6 +18,7 @@ export const register = async (req: Request, res: Response) => {
     // Check if profile exists (using email as a proxy if we had it, but let's just create)
     const profile = await prisma.profile.create({
       data: {
+        id: crypto.randomUUID(),
         full_name,
         // Since we don't have email in Profile, this is a placeholder logic
         // Ideally Profile and User are separate.
