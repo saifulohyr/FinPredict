@@ -3,6 +3,8 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import { rateLimit } from 'express-rate-limit';
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from './config/swagger';
 import { router } from './routes';
 import { errorHandler, notFoundHandler } from './middlewares/error.middleware';
 
@@ -35,6 +37,11 @@ app.use(morgan('dev'));
 app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'Welcome to FinPredict API' });
 });
+
+// Swagger Documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+  customSiteTitle: 'FinPredict API Documentation',
+}));
 
 // Routes
 app.use('/api', router);
