@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, Zap, Globe, Key, Landmark } from 'lucide-react';
+import { Eye, EyeOff, Zap } from 'lucide-react';
 
 export function LoginPage() {
-  const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
