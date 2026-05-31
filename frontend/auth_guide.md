@@ -1,7 +1,7 @@
 # 🔐 Panduan Koneksi Frontend ke Backend Auth API
 
 Dokumen ini menjelaskan cara tim **Frontend** menyambungkan diri ke **Backend Auth API** FinPredict.  
-Backend menyediakan dua metode autentikasi: **Manual** (Email & Password) dan **Google Login**.
+Backend menyediakan metode autentikasi **Manual** (Email & Password).
 
 ---
 
@@ -11,7 +11,7 @@ Backend menyediakan dua metode autentikasi: **Manual** (Email & Password) dan **
 | :---: | :--- | :---: | :--- |
 | `POST` | `/api/auth/register` | 🌐 Public | Daftar akun baru (email + password) |
 | `POST` | `/api/auth/login` | 🌐 Public | Login (email + password), mendapat token |
-| `GET` | `/api/auth/me` | 🔒 Bearer | Ambil profil user (auto-sync untuk Google Login) |
+| `GET` | `/api/auth/me` | 🔒 Bearer | Ambil profil user |
 | `PUT` | `/api/auth/profile` | 🔒 Bearer | Update profil (full_name, avatar_url) |
 
 > [!TIP]
@@ -88,71 +88,6 @@ Authorization: Bearer eyJhbGci...
 
 ---
 
-## Flow 2: Google Login
-
-Google Login memerlukan interaksi browser (pop-up/redirect), jadi prosesnya **dimulai di Frontend** menggunakan Supabase SDK.
-
-### Langkah 1 — Install Supabase di Frontend
-```bash
-npm install @supabase/supabase-js
-```
-
-### Langkah 2 — Buat Supabase Client di Frontend
-```typescript
-// src/lib/supabaseClient.ts
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
-```
-
-**Tambahkan `.env` di folder frontend:**
-```env
-VITE_SUPABASE_URL=https://uzzypvixmneaykmzvhog.supabase.co
-VITE_SUPABASE_ANON_KEY=sb_publishable_ynwMSZ4OPly9zZEh5Wnbhw_3y6EKqRT
-```
-
-### Langkah 3 — Trigger Login Google
-```typescript
-import { supabase } from '../lib/supabaseClient';
-
-const handleGoogleLogin = async () => {
-  const { error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: {
-      redirectTo: window.location.origin, // kembali ke app setelah login
-    },
-  });
-
-  if (error) console.error('Login error:', error.message);
-};
-```
-
-### Langkah 4 — Ambil Token & Sync ke Backend
-Setelah user berhasil login Google dan di-redirect kembali ke frontend:
-```typescript
-import { supabase } from '../lib/supabaseClient';
-import api from '../lib/axios'; // Axios instance kita
-
-// Listener: otomatis jalan saat login berhasil
-supabase.auth.onAuthStateChange(async (event, session) => {
-  if (event === 'SIGNED_IN' && session) {
-    const token = session.access_token;
-
-    // Sync profil ke backend kita
-    const response = await api.get('/auth/me', {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-
-    console.log('Profil user:', response.data);
-  }
-});
-```
-
----
-
 ## Setup Axios Interceptor (Rekomendasi)
 
 Agar tidak perlu menulis `Authorization: Bearer ...` berulang-ulang di setiap API call, buat **Axios instance** dengan interceptor otomatis:
@@ -198,19 +133,9 @@ const updated = await api.put('/auth/profile', { full_name: 'Nama Baru' });
 
 ```mermaid
 flowchart TD
-    A[User Buka App] --> B{Pilih Metode Login}
-
-    B -->|Email & Password| C["Frontend hit POST /api/auth/login"]
-    C --> D["Backend → Supabase signInWithPassword"]
+    A[User Buka App] --> C["Frontend hit POST /api/auth/login atau /api/auth/register"]
+    C --> D["Backend → Supabase Auth"]
     D --> E["Backend return access_token + profile"]
     E --> F["Frontend simpan token"]
-
-    B -->|Google| G["Frontend → supabase.auth.signInWithOAuth"]
-    G --> H["Google OAuth Pop-up"]
-    H --> I["Supabase return session + token"]
-    I --> J["Frontend hit GET /api/auth/me dengan token"]
-    J --> K["Backend validasi token & sync profil"]
-    K --> F
-
     F --> L["Semua request API pakai Bearer Token"]
 ```

@@ -142,21 +142,10 @@ router.post('/login', authController.login);
  * /auth/me:
  *   get:
  *     tags: [Auth]
- *     summary: Get current user profile (auto-sync)
+ *     summary: Get current user profile
  *     description: |
  *       Returns the authenticated user's profile.
- *       Works for BOTH Google Login and Manual Login users.
- *
- *       **For Google Login flow:**
- *       After the frontend completes Google OAuth via Supabase SDK,
- *       call this endpoint with the received token to sync the user's
- *       profile into the FinPredict database.
- *
- *       **For Manual Login flow:**
- *       Profile is already synced during /login, but this endpoint
- *       can be called anytime to get the latest profile data.
- *
- *       If the profile does not exist yet, it is automatically created.
+ *       Can be called anytime to get the latest profile data.
  *     security:
  *       - BearerAuth: []
  *     responses:

@@ -139,7 +139,6 @@ export const login = async (req: Request, res: Response): Promise<void> => {
  * Retrieves the authenticated user's profile.
  * If the profile does not exist yet in our database, it is automatically
  * created (synced) using the metadata embedded in the Supabase JWT.
- * Used by both Google Login and Manual Login flows.
  */
 export const getMe = async (req: Request, res: Response): Promise<void> => {
   try {

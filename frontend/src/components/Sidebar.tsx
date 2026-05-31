@@ -1,10 +1,10 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Receipt, BrainCircuit, Settings, LifeBuoy, X, LogOut } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 
 export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const location = useLocation();
-  const navigate = useNavigate();
+
   const user = useAuthStore(state => state.user);
   
   const navItems = [
