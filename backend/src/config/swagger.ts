@@ -13,8 +13,12 @@ const swaggerDefinition: swaggerJSDoc.OAS3Definition = {
   },
   servers: [
     {
+      url: 'https://inredict-saifulohyr9210-ljx2ibbv.leapcell.dev/api',
+      description: 'Production (Leapcell)',
+    },
+    {
       url: '/api',
-      description: 'API base path',
+      description: 'Local / Relative',
     },
   ],
   components: {

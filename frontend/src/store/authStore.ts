@@ -20,13 +20,12 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       token: null,
       setAuth: (user, token) => {
+        // Direct localStorage write required by api.ts interceptor
         localStorage.setItem('token', token);
-        localStorage.setItem('isLoggedIn', 'true'); // Backward compatibility
         set({ user, token });
       },
       logout: () => {
         localStorage.removeItem('token');
-        localStorage.removeItem('isLoggedIn'); // Backward compatibility
         set({ user: null, token: null });
         window.location.href = '/login';
       },
