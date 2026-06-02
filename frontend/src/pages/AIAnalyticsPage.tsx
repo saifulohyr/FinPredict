@@ -10,6 +10,7 @@ import {
 import { BrainCircuit, TrendingUp, AlertTriangle, ShieldCheck, ArrowRight } from 'lucide-react';
 import { usePredictions } from '../hooks/usePredictions';
 import { useNotifications } from '../hooks/useNotifications';
+import { useTransactions } from '../hooks/useTransactions';
 import { useNavigate } from 'react-router-dom';
 
 export function AIAnalyticsPage() {
@@ -21,11 +22,27 @@ export function AIAnalyticsPage() {
   const { useNotificationsQuery } = useNotifications();
   const { data: notifications = [] } = useNotificationsQuery();
   
-  // Sort warnings (from notifications)
-  const warnings = notifications.filter((n: any) => n.type === 'WARNING').sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  const { useTransactionSummaryQuery } = useTransactions();
+  const { data: summary } = useTransactionSummaryQuery();
+  
+  // Sort warnings (from notifications) including DANGER from AI
+  const warnings = notifications.filter((n: any) => n.type === 'WARNING' || n.type === 'DANGER').sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
   const latestWarning = warnings[0];
 
-  const accuracyScore = 94.82; // Mock accuracy for now, could be dynamic
+  const latestPred = predictions[predictions.length - 1];
+  const accuracyScore = latestPred ? Math.round(latestPred.confidence_score * 100) : 94;
+
+  const expenseByCategory = summary?.expenseByCategory || {};
+  const topCategory = Object.entries(expenseByCategory).sort(([,a], [,b]) => Number(b) - Number(a))[0];
+  const topCatName = topCategory ? topCategory[0] : 'Kebutuhan Umum';
+  
+  const wawasanPerilaku = `Model LSTM kami telah mempelajari riwayat belanja Anda. Anda cenderung mengalokasikan anggaran terbesar pada kategori ${topCatName}. Sistem akan terus memonitor pola ini.`;
+  const peluangMenabung = topCategory 
+    ? `"AI menemukan bahwa pengeluaran terbesar Anda ada di kategori ${topCatName}. Mengurangi sedikit pengeluaran di sektor ini bisa menambah surplus yang signifikan."`
+    : `"Belum cukup data transaksi untuk menemukan peluang menabung spesifik. Yuk, catat lebih banyak!"`;
+  const stabilitasKeuangan = latestWarning
+    ? `"Skor stabilitas Anda berisiko! AI mendeteksi pola overspending. Segera evaluasi batas anggaran Anda."`
+    : `"Skor kepercayaan tinggi. Anda berada di jalur yang tepat! Terus pertahankan pola keuangan sehat Anda."`;
 
   // Chart Data Preparation
   // Combine historical (from summary) and predicted (from predictions)
@@ -138,7 +155,7 @@ export function AIAnalyticsPage() {
           </div>
           <h3 className="font-black text-lg md:text-xl uppercase mb-2 leading-none">Peluang Menabung</h3>
           <p className="font-bold text-xs md:text-sm mb-6 leading-tight italic">
-            "AI menemukan langganan rutin senilai Rp75rb yang tidak digunakan dalam 60 hari. Batalkan untuk menambah surplus."
+            {peluangMenabung}
           </p>
           <button 
             onClick={() => navigate('/transactions')}
@@ -154,7 +171,7 @@ export function AIAnalyticsPage() {
           </div>
           <h3 className="font-black text-lg md:text-xl uppercase mb-2 leading-none">Stabilitas Keuangan</h3>
           <p className="font-bold text-xs md:text-sm mb-6 leading-tight italic">
-            "Skor kepercayaan tinggi. Anda berada di jalur yang tepat untuk mencapai target tabungan Rp2 Juta di akhir Juni."
+            {stabilitasKeuangan}
           </p>
           <div 
             onClick={() => navigate('/transactions')}
@@ -169,15 +186,15 @@ export function AIAnalyticsPage() {
           <div className="flex-1 text-left">
              <h2 className="text-2xl md:text-3xl font-black uppercase mb-4 text-[#4ade80]">Wawasan Perilaku</h2>
              <p className="text-base md:text-lg font-bold leading-tight">
-               Model LSTM kami telah mempelajari siklus belanja Anda. Anda cenderung membelanjakan <span className="text-[#D4FF00]">40% lebih banyak</span> pada Jumat pertama setelah gajian. Sistem akan menyesuaikan peringatan secara otomatis.
+               {wawasanPerilaku}
              </p>
           </div>
           <div className="w-full lg:w-1/3 bg-white/10 p-4 border-2 border-dashed border-[#4ade80]">
              <p className="text-[10px] font-black uppercase mb-2 text-[#4ade80]">Keyakinan Pola AI</p>
              <div className="w-full h-4 bg-white/20 border border-white relative">
-                <div className="h-full bg-[#4ade80] w-[85%]"></div>
+                <div className="h-full bg-[#4ade80]" style={{ width: `${accuracyScore}%` }}></div>
              </div>
-             <p className="text-right text-[10px] font-black mt-1 uppercase">85% Kecocokan Pola</p>
+             <p className="text-right text-[10px] font-black mt-1 uppercase">{accuracyScore}% Kecocokan Pola</p>
           </div>
         </div>
 

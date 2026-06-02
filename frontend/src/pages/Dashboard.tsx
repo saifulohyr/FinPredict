@@ -26,6 +26,9 @@ export const Dashboard = () => {
     };
   });
 
+  const latestPred = predictions[predictions.length - 1];
+  const accuracyScore = latestPred ? Math.round(latestPred.confidence_score * 100) : 94;
+
   const projectedTotal = warningStatus?.projectedTotal || 0;
   
   // Calculate distribution data from summary
@@ -50,7 +53,7 @@ export const Dashboard = () => {
               AI AKTIF
             </span>
             <span className="bg-black text-white px-3 py-1 text-[10px] md:text-xs font-bold border-2 border-black rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-              AKURASI: <span className="text-[#4ade80]">99.4%</span>
+              AKURASI: <span className="text-[#4ade80]">{accuracyScore}%</span>
             </span>
           </div>
         </div>

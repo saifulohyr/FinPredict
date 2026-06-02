@@ -56,7 +56,7 @@ export function Navbar({ onMenuClick }: { onMenuClick: () => void }) {
                 {notifications.length > 0 ? (
                   notifications.map((n: any) => (
                     <div key={n.id} className="p-3 border-b-2 border-black hover:bg-yellow-50 cursor-pointer">
-                      <p className="font-black text-[10px] uppercase text-[#B22222] mb-1">{n.type === 'WARNING' ? '⚠️ ' : ''}{n.title}</p>
+                      <p className="font-black text-[10px] uppercase text-[#B22222] mb-1">{(n.type === 'WARNING' || n.type === 'DANGER') ? '⚠️ ' : ''}{n.title}</p>
                       <p className="font-bold text-xs leading-tight normal-case">{n.message}</p>
                       <p className="text-[9px] font-bold text-slate-500 mt-2">{new Date(n.created_at).toLocaleDateString('id-ID')}</p>
                     </div>
