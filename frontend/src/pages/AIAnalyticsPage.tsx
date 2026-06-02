@@ -142,7 +142,7 @@ export function AIAnalyticsPage() {
             </p>
           </div>
           <button 
-            onClick={() => navigate('/settings')}
+            onClick={() => navigate('/budgets')}
             className="w-full bg-black text-white py-3 font-black uppercase text-[10px] border-2 border-white shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
           >
             Sesuaikan Anggaran

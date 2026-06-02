@@ -5,8 +5,9 @@ import { useNotifications } from '../hooks/useNotifications';
 import { useAuthStore } from '../store/authStore';
 
 export function Navbar({ onMenuClick }: { onMenuClick: () => void }) {
-  const { useNotificationsQuery } = useNotifications();
+  const { useNotificationsQuery, useMarkAsReadMutation } = useNotifications();
   const { data: notifications = [] } = useNotificationsQuery();
+  const markAsReadMutation = useMarkAsReadMutation();
   const unreadCount = notifications.filter((n: any) => !n.is_read).length;
   
   const user = useAuthStore(state => state.user);
@@ -55,8 +56,19 @@ export function Navbar({ onMenuClick }: { onMenuClick: () => void }) {
                 </div>
                 {notifications.length > 0 ? (
                   notifications.map((n: any) => (
-                    <div key={n.id} className="p-3 border-b-2 border-black hover:bg-yellow-50 cursor-pointer">
-                      <p className="font-black text-[10px] uppercase text-[#B22222] mb-1">{(n.type === 'WARNING' || n.type === 'DANGER') ? '⚠️ ' : ''}{n.title}</p>
+                    <div 
+                      key={n.id} 
+                      onClick={() => {
+                        if (!n.is_read) {
+                          markAsReadMutation.mutate(n.id);
+                        }
+                      }}
+                      className={`p-3 border-b-2 border-black hover:bg-[#D4FF00] cursor-pointer transition-colors ${!n.is_read ? 'bg-white' : 'bg-gray-100 opacity-70'}`}
+                    >
+                      <div className="flex justify-between items-start">
+                        <p className="font-black text-[10px] uppercase text-[#B22222] mb-1">{(n.type === 'WARNING' || n.type === 'DANGER') ? '⚠️ ' : ''}{n.title}</p>
+                        {!n.is_read && <div className="w-2 h-2 rounded-full bg-[#FF4D4D] border border-black shrink-0"></div>}
+                      </div>
                       <p className="font-bold text-xs leading-tight normal-case">{n.message}</p>
                       <p className="text-[9px] font-bold text-slate-500 mt-2">{new Date(n.created_at).toLocaleDateString('id-ID')}</p>
                     </div>

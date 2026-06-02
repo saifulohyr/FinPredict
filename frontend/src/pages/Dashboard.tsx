@@ -9,8 +9,10 @@ import {
 import { AlertTriangle, Calendar, Filter } from 'lucide-react';
 import { usePredictions } from '../hooks/usePredictions';
 import { useTransactions } from '../hooks/useTransactions';
+import { useNavigate } from 'react-router-dom';
 
 export const Dashboard = () => {
+  const navigate = useNavigate();
   const { usePredictionsQuery, useWarningStatusQuery } = usePredictions();
   const { useTransactionSummaryQuery } = useTransactions();
 
@@ -69,8 +71,8 @@ export const Dashboard = () => {
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-xl md:text-2xl font-black uppercase italic">Proyeksi Saldo</h2>
             <div className="flex gap-2">
-              <button className="border-2 border-black rounded-xl p-1 hover:bg-[#D4FF00] transition-colors"><Calendar size={20}/></button>
-              <button className="border-2 border-black rounded-xl p-1 hover:bg-[#D4FF00] transition-colors"><Filter size={20}/></button>
+              <button onClick={() => alert('Fitur Kalender akan segera hadir di versi mendatang!')} className="border-2 border-black rounded-xl p-1 hover:bg-[#D4FF00] transition-colors"><Calendar size={20}/></button>
+              <button onClick={() => alert('Fitur Filter akan segera hadir di versi mendatang!')} className="border-2 border-black rounded-xl p-1 hover:bg-[#D4FF00] transition-colors"><Filter size={20}/></button>
             </div>
           </div>
 
@@ -120,7 +122,7 @@ export const Dashboard = () => {
                 melebihi anggaran Anda (Rp {warningStatus.totalBudget.toLocaleString('id-ID')}).
               </p>
               <div className="space-y-3">
-                <button className="w-full bg-white text-[#B22222] border-4 border-black rounded-2xl py-3 font-black uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all">
+                <button onClick={() => navigate('/transactions')} className="w-full bg-white text-[#B22222] border-4 border-black rounded-2xl py-3 font-black uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all">
                   Tinjau Pengeluaran
                 </button>
               </div>
