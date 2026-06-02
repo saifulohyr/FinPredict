@@ -7,6 +7,14 @@ export function BudgetSettingsPage() {
   const [isAiActive, setIsAiActive] = useState(true);
   const [fixedIncome, setFixedIncome] = useState('7.500.000');
   const [savingsTarget, setSavingsTarget] = useState('2.000.000');
+  const [toastMessage, setToastMessage] = useState<{ text: string, type: 'success' | 'error' } | null>(null);
+
+  const showToast = (text: string, type: 'success' | 'error') => {
+    setToastMessage({ text, type });
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 3000);
+  };
 
   const handleFixedIncomeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value.replace(/\./g, '');
@@ -63,9 +71,9 @@ export function BudgetSettingsPage() {
       }
 
       await Promise.all(promises);
-      alert('Pengaturan anggaran berhasil disimpan!');
+      showToast('Pengaturan anggaran berhasil disimpan!', 'success');
     } catch (error) {
-      alert('Gagal menyimpan anggaran.');
+      showToast('Gagal menyimpan anggaran.', 'error');
     }
   };
 
@@ -194,6 +202,18 @@ export function BudgetSettingsPage() {
         </div>
 
       </div>
+
+      {/* Neo-Brutalism Toast Notification */}
+      {toastMessage && (
+        <div className="fixed bottom-8 right-8 z-50">
+          <div className={`border-4 border-black p-4 md:p-6 font-black uppercase text-sm md:text-base shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex items-center gap-3 ${
+            toastMessage.type === 'success' ? 'bg-[#7CFF7C] text-black' : 'bg-[#FF4D4D] text-white'
+          }`}>
+            {toastMessage.type === 'success' ? <ShieldCheck size={28} /> : <Bell size={28} />}
+            <span>{toastMessage.text}</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

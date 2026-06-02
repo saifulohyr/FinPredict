@@ -117,7 +117,7 @@ export function SupportPage() {
                 </div>
                 <div>
                   <p className="text-[10px] font-black uppercase">Email Dukungan</p>
-                  <p className="font-bold text-sm italic">support@finpredict.ai</p>
+                  <p className="font-bold text-sm italic">saifulohyr@gmail.com</p>
                 </div>
               </div>
               <div className="flex items-center gap-4">
@@ -126,7 +126,7 @@ export function SupportPage() {
                 </div>
                 <div>
                   <p className="text-[10px] font-black uppercase">Hotline 24/7</p>
-                  <p className="font-bold text-sm italic">+62 800 1234 5678</p>
+                  <p className="font-bold text-sm italic">+62 858 7506 1912</p>
                 </div>
               </div>
             </div>
