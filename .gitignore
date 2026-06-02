@@ -24,5 +24,7 @@ Thumbs.db
 *.log
 npm-debug.log*
 frontend/auth_guide.md
-ai-service/  
- 
+
+# AI service - exclude notebook and large unused models, keep deployed files
+ai-service/generator_FIXipynb.ipynb
+ai-service/__pycache__/
