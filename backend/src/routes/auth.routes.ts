@@ -1,6 +1,10 @@
 import { Router } from 'express';
 import { requireAuth } from '../middlewares/auth.middleware';
 import * as authController from '../controllers/auth.controller';
+import multer from 'multer';
+
+// Use memory storage for multer since we upload directly to Supabase
+const upload = multer({ storage: multer.memoryStorage() });
 
 const router = Router();
 
@@ -219,5 +223,27 @@ router.get('/me', requireAuth, authController.getMe);
  *         description: Internal server error
  */
 router.put('/profile', requireAuth, authController.updateProfile);
+
+/**
+ * @openapi
+ * /auth/credentials:
+ *   put:
+ *     tags: [Auth]
+ *     summary: Update email and/or password
+ *     security:
+ *       - BearerAuth: []
+ */
+router.put('/credentials', requireAuth, authController.updateCredentials);
+
+/**
+ * @openapi
+ * /auth/avatar:
+ *   post:
+ *     tags: [Auth]
+ *     summary: Upload avatar image to Supabase Storage
+ *     security:
+ *       - BearerAuth: []
+ */
+router.post('/avatar', requireAuth, upload.single('avatar'), authController.uploadAvatar);
 
 export default router;

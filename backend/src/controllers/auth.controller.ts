@@ -58,7 +58,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       status: 'success',
       message: 'Registration successful.',
       data: {
-        user: profile,
+        user: { ...profile, email: data.user.email },
         access_token: data.session?.access_token || null,
         refresh_token: data.session?.refresh_token || null,
       },
@@ -122,7 +122,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       status: 'success',
       message: 'Login successful.',
       data: {
-        user: profile,
+        user: { ...profile, email: data.user.email },
         access_token: data.session.access_token,
         refresh_token: data.session.refresh_token,
       },
@@ -167,7 +167,7 @@ export const getMe = async (req: Request, res: Response): Promise<void> => {
 
     res.json({
       status: 'success',
-      data: profile,
+      data: { ...profile, email: user.email },
     });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown error';
@@ -210,6 +210,137 @@ export const updateProfile = async (req: Request, res: Response): Promise<void> 
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown error';
     console.error('❌ updateProfile error:', message);
+    res.status(500).json({ status: 'error', message });
+  }
+};
+
+/**
+ * PUT /api/auth/credentials
+ * Updates the user's email or password.
+ * Requires verification of current password.
+ */
+export const updateCredentials = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { email, current_password, new_password } = req.body;
+    const authHeader = req.headers.authorization;
+    const userEmail = req.user?.email;
+
+    if (!authHeader) {
+      res.status(401).json({ status: 'error', message: 'Missing token' });
+      return;
+    }
+
+    // Verify current password first if updating password
+    if (new_password) {
+      if (!current_password) {
+        res.status(400).json({ status: 'error', message: 'Current password is required to set a new password.' });
+        return;
+      }
+      
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: userEmail as string,
+        password: current_password,
+      });
+
+      if (signInError) {
+        res.status(400).json({ status: 'error', message: 'Current password is incorrect.' });
+        return;
+      }
+    }
+
+    // Create a user-scoped client
+    const { createClient } = require('@supabase/supabase-js');
+    const userClient = createClient(process.env.SUPABASE_URL || '', process.env.SUPABASE_ANON_KEY || '', {
+      global: { headers: { Authorization: authHeader } }
+    });
+
+    const updates: any = {};
+    if (email && email !== userEmail) updates.email = email;
+    if (new_password) updates.password = new_password;
+
+    if (Object.keys(updates).length === 0) {
+      res.status(400).json({ status: 'error', message: 'No changes provided.' });
+      return;
+    }
+
+    const { data, error } = await userClient.auth.updateUser(updates);
+
+    if (error) {
+      res.status(400).json({ status: 'error', message: error.message });
+      return;
+    }
+
+    res.json({
+      status: 'success',
+      message: email && email !== userEmail ? 'Pembaruan berhasil. Silakan periksa email Anda (lama & baru) untuk verifikasi.' : 'Password berhasil diperbarui.',
+      data: data.user
+    });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    console.error('❌ updateCredentials error:', message);
+    res.status(500).json({ status: 'error', message });
+  }
+};
+
+/**
+ * POST /api/auth/avatar
+ * Uploads an avatar image to Supabase Storage and updates the user's profile.
+ */
+export const uploadAvatar = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const file = (req as any).file;
+    const userId = req.user!.sub;
+    const authHeader = req.headers.authorization;
+
+    if (!file) {
+      res.status(400).json({ status: 'error', message: 'No file provided.' });
+      return;
+    }
+
+    if (!authHeader) {
+      res.status(401).json({ status: 'error', message: 'Missing token' });
+      return;
+    }
+
+    const { createClient } = require('@supabase/supabase-js');
+    const userClient = createClient(process.env.SUPABASE_URL || '', process.env.SUPABASE_ANON_KEY || '', {
+      global: { headers: { Authorization: authHeader } }
+    });
+
+    // Extract extension
+    const ext = file.originalname.split('.').pop() || 'png';
+    const filename = `${userId}-${Date.now()}.${ext}`;
+
+    const { data, error } = await userClient.storage
+      .from('avatars')
+      .upload(filename, file.buffer, {
+        contentType: file.mimetype,
+        upsert: true
+      });
+
+    if (error) {
+      console.error('Supabase upload error:', error);
+      res.status(400).json({ status: 'error', message: 'Gagal upload ke Supabase: ' + error.message });
+      return;
+    }
+
+    // Get public URL
+    const { data: { publicUrl } } = userClient.storage.from('avatars').getPublicUrl(filename);
+
+    // Update Profile DB
+    const updated = await prisma.profile.update({
+      where: { id: userId },
+      data: { avatar_url: publicUrl },
+    });
+
+    res.json({
+      status: 'success',
+      message: 'Avatar uploaded successfully',
+      data: updated
+    });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    console.error('❌ uploadAvatar error:', message);
     res.status(500).json({ status: 'error', message });
   }
 };

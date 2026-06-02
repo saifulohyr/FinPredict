@@ -6,7 +6,7 @@ import {
   Tooltip, 
   ResponsiveContainer 
 } from 'recharts';
-import { AlertTriangle, Calendar, Filter, Search } from 'lucide-react';
+import { AlertTriangle, Calendar, Filter } from 'lucide-react';
 import { usePredictions } from '../hooks/usePredictions';
 import { useTransactions } from '../hooks/useTransactions';
 
