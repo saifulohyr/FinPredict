@@ -5,8 +5,22 @@ import { useCategories } from '../hooks/useCategories';
 
 export function BudgetSettingsPage() {
   const [isAiActive, setIsAiActive] = useState(true);
-  const [fixedIncome, setFixedIncome] = useState('7500000');
-  const [savingsTarget, setSavingsTarget] = useState('2000000');
+  const [fixedIncome, setFixedIncome] = useState('7.500.000');
+  const [savingsTarget, setSavingsTarget] = useState('2.000.000');
+
+  const handleFixedIncomeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const rawValue = e.target.value.replace(/\./g, '');
+    if (!isNaN(Number(rawValue))) {
+      setFixedIncome(rawValue.replace(/\B(?=(\d{3})+(?!\d))/g, "."));
+    }
+  };
+
+  const handleSavingsTargetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const rawValue = e.target.value.replace(/\./g, '');
+    if (!isNaN(Number(rawValue))) {
+      setSavingsTarget(rawValue.replace(/\B(?=(\d{3})+(?!\d))/g, "."));
+    }
+  };
   
   const { useBudgetsQuery, useUpsertBudgetMutation } = useBudgets();
   const { data: budgets = [] } = useBudgetsQuery();
@@ -20,8 +34,8 @@ export function BudgetSettingsPage() {
     const incomeBudget = budgets.find((b: any) => b.category?.name === 'Pemasukan Tetap' || b.category?.type === 'INCOME');
     const savingsBudget = budgets.find((b: any) => b.category?.name === 'Target Tabungan');
     
-    if (incomeBudget) setFixedIncome(incomeBudget.monthly_limit.toString());
-    if (savingsBudget) setSavingsTarget(savingsBudget.monthly_limit.toString());
+    if (incomeBudget) setFixedIncome(incomeBudget.monthly_limit.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
+    if (savingsBudget) setSavingsTarget(savingsBudget.monthly_limit.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
   }, [budgets]);
 
   const handleSave = async () => {
@@ -36,14 +50,14 @@ export function BudgetSettingsPage() {
       if (incomeCat && fixedIncome) {
         promises.push(upsertMutation.mutateAsync({
           category_id: incomeCat.id,
-          monthly_limit: Number(fixedIncome),
+          monthly_limit: Number(fixedIncome.replace(/\./g, '')),
           month_year: currentMonth
         }));
       }
       if (savingCat && savingsTarget) {
         promises.push(upsertMutation.mutateAsync({
           category_id: savingCat.id,
-          monthly_limit: Number(savingsTarget),
+          monthly_limit: Number(savingsTarget.replace(/\./g, '')),
           month_year: currentMonth
         }));
       }
@@ -90,9 +104,9 @@ export function BudgetSettingsPage() {
                     Pemasukan Tetap
                   </label>
                   <input 
-                    type="number" 
+                    type="text" 
                     value={fixedIncome}
-                    onChange={(e) => setFixedIncome(e.target.value)}
+                    onChange={handleFixedIncomeChange}
                     className="w-full border-4 border-black p-4 font-black text-xl focus:bg-[#FFFF00] outline-none transition-colors" 
                   />
                 </div>
@@ -102,9 +116,9 @@ export function BudgetSettingsPage() {
                     Target Tabungan
                   </label>
                   <input 
-                    type="number" 
+                    type="text" 
                     value={savingsTarget}
-                    onChange={(e) => setSavingsTarget(e.target.value)}
+                    onChange={handleSavingsTargetChange}
                     className="w-full border-4 border-black p-4 font-black text-xl focus:bg-[#FFFF00] outline-none transition-colors" 
                   />
                 </div>
@@ -113,7 +127,7 @@ export function BudgetSettingsPage() {
               <div className="bg-[#FFFF00] border-4 border-black p-6 flex flex-col justify-center items-center text-center shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
                 <Target size={40} className="mb-2" />
                 <p className="font-black text-xs uppercase mb-1 text-black">Anggaran Aman (Prediksi AI)</p>
-                <p className="text-4xl font-black leading-none italic">Rp {(Number(fixedIncome) - Number(savingsTarget)).toLocaleString('id-ID')}</p>
+                <p className="text-4xl font-black leading-none italic">Rp {(Number(fixedIncome.replace(/\./g, '')) - Number(savingsTarget.replace(/\./g, ''))).toLocaleString('id-ID')}</p>
                 <p className="text-[10px] font-bold mt-2 uppercase">Batas pengeluaran bulanan agar target tercapai.</p>
               </div>
             </div>

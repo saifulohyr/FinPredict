@@ -10,9 +10,6 @@ import { errorHandler, notFoundHandler } from './middlewares/error.middleware';
 
 const app: Application = express();
 
-// Trust Railway/cloud proxy (fixes X-Forwarded-For ValidationError with express-rate-limit)
-app.set('trust proxy', 1);
-
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes

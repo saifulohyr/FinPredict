@@ -112,10 +112,10 @@ export const Dashboard = () => {
         {/* Early Warning Side Card */}
         <div className="col-span-1 md:col-span-12 lg:col-span-4 bg-[#B22222] border-4 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-white">
           <div className="flex items-center gap-4 mb-6">
-            <div className="bg-white p-2 border-2 border-black text-[#B22222]">
+            <div className="bg-white p-2 border-2 border-black text-[#B22222] shrink-0">
               <AlertTriangle size={32} />
             </div>
-            <h2 className="text-2xl md:text-3xl font-black uppercase leading-none">Peringatan Dini</h2>
+            <h2 className="text-2xl md:text-3xl lg:text-2xl xl:text-3xl font-black uppercase leading-none break-words min-w-0">Peringatan Dini</h2>
           </div>
           
           {warningStatus?.isOverBudget ? (

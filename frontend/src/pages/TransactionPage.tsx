@@ -9,6 +9,13 @@ export function TransactionPage() {
   const [date, setDate] = useState('');
   const [categoryId, setCategoryId] = useState('');
   const [description, setDescription] = useState('');
+
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const rawValue = e.target.value.replace(/\./g, '');
+    if (!isNaN(Number(rawValue))) {
+      setAmount(rawValue.replace(/\B(?=(\d{3})+(?!\d))/g, "."));
+    }
+  };
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { useCategoriesQuery } = useCategories();
@@ -27,7 +34,7 @@ export function TransactionPage() {
     
     createMutation.mutate({
       category_id: Number(categoryId),
-      amount: Number(amount),
+      amount: Number(amount.replace(/\./g, '')),
       transaction_date: date,
       description
     }, {
@@ -103,10 +110,10 @@ export function TransactionPage() {
               <div className="group">
                 <label className="block text-[10px] md:text-xs font-black uppercase mb-1">Jumlah (Rp)</label>
                 <input 
-                  type="number" 
+                  type="text" 
                   value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  placeholder="0.00" 
+                  onChange={handleAmountChange}
+                  placeholder="0" 
                   className="w-full border-4 border-black p-3 md:p-4 font-black text-2xl md:text-3xl focus:outline-none focus:bg-yellow-50"
                   required
                 />
