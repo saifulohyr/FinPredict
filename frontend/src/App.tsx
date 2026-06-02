@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Layout } from '@/components/Layout';
 import { LoginPage } from '@/pages/LoginPage';
+import { LandingPage } from '@/pages/LandingPage';
 import { Dashboard } from '@/pages/Dashboard';
 import { TransactionPage } from '@/pages/TransactionPage';
 import { AIAnalyticsPage } from '@/pages/AIAnalyticsPage';
@@ -22,6 +23,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 function App() {
   return (
     <Routes>
+      <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route
         path="/*"
@@ -29,7 +31,7 @@ function App() {
           <ProtectedRoute>
             <Layout>
               <Routes>
-                <Route path="/" element={<Dashboard />} />
+                <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/transactions" element={<TransactionPage/>} />
                 <Route path="/budgets" element={<BudgetSettingsPage/>} />
                 <Route path="/analytics" element={<AIAnalyticsPage/>} />

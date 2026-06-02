@@ -8,7 +8,7 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
   const user = useAuthStore(state => state.user);
   
   const navItems = [
-    { name: 'Forecast', path: '/', icon: <LayoutDashboard size={20} /> },
+    { name: 'Forecast', path: '/dashboard', icon: <LayoutDashboard size={20} /> },
     { name: 'Transactions', path: '/transactions', icon: <Receipt size={20} /> },
     { name: 'AI Analytics', path: '/analytics', icon: <BrainCircuit size={20} /> },
     { name: 'Settings', path: '/budgets', icon: <Settings size={20} /> },
