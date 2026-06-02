@@ -14,12 +14,12 @@ export function Navbar({ onMenuClick }: { onMenuClick: () => void }) {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifMenu, setShowNotifMenu] = useState(false);
   return (
-    <header className="h-20 bg-[#F5F5DC] border-b-4 border-black flex items-center justify-between px-4 md:px-8">
+    <header className="h-20 bg-[#F0F0F0] border-b-4 border-black flex items-center justify-between px-4 md:px-8">
       {/* Mobile Menu & Logo */}
       <div className="flex items-center gap-4">
         <button 
           onClick={onMenuClick}
-          className="md:hidden p-2 border-4 border-black bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+          className="md:hidden p-2 border-4 border-black rounded-2xl bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
         >
           <Menu size={24} />
         </button>
@@ -39,18 +39,18 @@ export function Navbar({ onMenuClick }: { onMenuClick: () => void }) {
                 setShowNotifMenu(!showNotifMenu);
                 if (showUserMenu) setShowUserMenu(false);
               }}
-              className="relative p-2 border-2 md:border-4 border-black bg-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[3px] active:translate-y-[3px] transition-all"
+              className="relative p-2 border-2 md:border-4 border-black rounded-2xl bg-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[3px] active:translate-y-[3px] transition-all"
             >
               <Bell size={18} />
               {unreadCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-[#FF4D4D] text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full border-2 border-black font-bold">
+                <span className="absolute -top-2 -right-2 bg-[#FF4D4D] text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full border-2 border-black rounded-xl font-bold">
                   {unreadCount > 99 ? '99+' : unreadCount}
                 </span>
               )}
             </button>
             {showNotifMenu && (
-              <div className="absolute right-0 top-12 mt-2 w-72 md:w-80 bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] z-50 max-h-96 overflow-y-auto">
-                <div className="p-3 border-b-4 border-black bg-[#FFFF00]">
+              <div className="absolute right-0 top-12 mt-2 w-72 md:w-80 bg-white border-4 border-black rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] z-50 max-h-96 overflow-y-auto">
+                <div className="p-3 border-b-4 border-black bg-[#D4FF00]">
                   <p className="font-black text-sm uppercase">Peringatan ({unreadCount})</p>
                 </div>
                 {notifications.length > 0 ? (
@@ -76,13 +76,13 @@ export function Navbar({ onMenuClick }: { onMenuClick: () => void }) {
                 setShowUserMenu(!showUserMenu);
                 if (showNotifMenu) setShowNotifMenu(false);
               }}
-              className="p-2 border-2 md:border-4 border-black bg-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[3px] active:translate-y-[3px] transition-all"
+              className="p-2 border-2 md:border-4 border-black rounded-2xl bg-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[3px] active:translate-y-[3px] transition-all"
             >
               <User size={18} />
             </button>
 
             {showUserMenu && (
-              <div className="absolute right-0 top-12 mt-2 w-48 bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] z-50">
+              <div className="absolute right-0 top-12 mt-2 w-48 bg-white border-4 border-black rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] z-50">
                 <div className="p-3 border-b-2 border-black">
                   <p className="font-black text-sm truncate">{user?.full_name || 'User'}</p>
                 </div>
@@ -96,7 +96,7 @@ export function Navbar({ onMenuClick }: { onMenuClick: () => void }) {
                 </Link>
                 <button 
                   onClick={() => logout()}
-                  className="w-full flex items-center gap-2 p-3 hover:bg-[#FFFF00] font-black text-xs uppercase transition-colors text-left"
+                  className="w-full flex items-center gap-2 p-3 hover:bg-[#D4FF00] font-black text-xs uppercase transition-colors text-left"
                 >
                   <LogOut size={14} />
                   Logout

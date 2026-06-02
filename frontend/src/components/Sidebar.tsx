@@ -20,11 +20,11 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
   };
 
   return (
-    <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-[#F5F5DC] border-r-4 border-black transition-transform duration-300 transform md:relative md:translate-x-0 flex flex-col ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-      <button onClick={onClose} className="md:hidden absolute top-4 right-4 p-1 border-2 border-black bg-white z-10"><X size={20} /></button>
+    <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-[#F0F0F0] border-r-4 border-black transition-transform duration-300 transform md:relative md:translate-x-0 flex flex-col ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+      <button onClick={onClose} className="md:hidden absolute top-4 right-4 p-1 border-2 border-black rounded-xl bg-white z-10"><X size={20} /></button>
 
-      <Link to="/profile" onClick={onClose} className="p-8 flex flex-col items-center border-b-4 border-black hover:bg-[#FFFF00] transition-colors group">
-        <div className="w-20 h-20 rounded-full border-4 border-black overflow-hidden mb-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white group-hover:translate-x-[2px] group-hover:translate-y-[2px] group-hover:shadow-none transition-all">
+      <Link to="/profile" onClick={onClose} className="p-8 flex flex-col items-center border-b-4 border-black hover:bg-[#D4FF00] transition-colors group">
+        <div className="w-20 h-20 rounded-full border-4 border-black rounded-2xl overflow-hidden mb-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white group-hover:translate-x-[2px] group-hover:translate-y-[2px] group-hover:shadow-none transition-all">
           <img 
             src={user?.avatar_url || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200"} 
             alt="Profile" 
@@ -51,7 +51,7 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
 
       {/* Logout Button */}
       <div className="p-4 mt-auto border-t-4 border-black">
-        <button onClick={handleLogout} className="w-full flex items-center justify-center gap-2 border-4 border-black p-2 font-black uppercase bg-[#B22222] text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[4px] active:translate-y-[4px] transition-all">
+        <button onClick={handleLogout} className="w-full flex items-center justify-center gap-2 border-4 border-black rounded-2xl p-2 font-black uppercase bg-[#B22222] text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[4px] active:translate-y-[4px] transition-all">
           <LogOut size={18} /> Exit System
         </button>
       </div>

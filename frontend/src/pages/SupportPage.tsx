@@ -35,7 +35,7 @@ export function SupportPage() {
   };
 
   return (
-    <div className="bg-[#F5F5DC] min-h-screen font-sans text-black p-4 md:p-8">
+    <div className="bg-[#F0F0F0] min-h-screen font-sans text-black p-4 md:p-8">
       {/* Header */}
       <div className="mb-10 text-left">
         <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter mb-2 italic leading-none">Pusat Bantuan</h1>
@@ -56,10 +56,10 @@ export function SupportPage() {
             {faqs.map((faq, idx) => {
               const isOpen = openFaq === idx;
               return (
-                <div key={idx} className="bg-white border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+                <div key={idx} className="bg-white border-4 border-black rounded-2xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
                   <button 
                     onClick={() => setOpenFaq(isOpen ? null : idx)}
-                    className="w-full p-4 flex justify-between items-center text-left hover:bg-[#FFFF00] transition-colors"
+                    className="w-full p-4 flex justify-between items-center text-left hover:bg-[#D4FF00] transition-colors"
                   >
                     <span className="font-black uppercase text-sm md:text-base">{faq.question}</span>
                     {isOpen ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
@@ -81,30 +81,30 @@ export function SupportPage() {
         <div className="col-span-1 md:col-span-12 lg:col-span-5 space-y-8">
           
           {/* Form */}
-          <div className="bg-[#4ade80] border-4 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+          <div className="bg-[#4ade80] border-4 border-black rounded-2xl p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
             <h2 className="text-xl font-black uppercase mb-4 italic">Hubungi Tim AI</h2>
             
             {isSent ? (
-              <div className="bg-black text-[#4ade80] p-6 border-4 border-black font-black uppercase text-center text-lg animate-pulse">
+              <div className="bg-black text-[#4ade80] p-6 border-4 border-black rounded-2xl font-black uppercase text-center text-lg animate-pulse">
                 PESAN TERKIRIM!
               </div>
             ) : (
               <form onSubmit={handleSendMessage} className="space-y-4">
                 <div>
-                  <label className="block text-[10px] font-black uppercase border-2 border-black bg-white px-2 py-0.5 ml-3 -mb-2 relative z-20 w-fit">
+                  <label className="block text-[10px] font-black uppercase border-2 border-black rounded-xl bg-white px-2 py-0.5 ml-3 -mb-2 relative z-20 w-fit">
                     Pesan Kendala
                   </label>
                   <textarea 
                     rows={4}
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
-                    className="w-full border-4 border-black p-4 font-bold text-sm focus:bg-yellow-50 outline-none resize-none" 
+                    className="w-full border-4 border-black rounded-2xl p-4 font-bold text-sm focus:bg-yellow-50 outline-none resize-none" 
                     placeholder="Ceritakan kendala Anda di sini..."
                   />
                 </div>
                 <button 
                   type="submit"
-                  className="bg-white w-full border-4 border-black px-4 py-3 font-black uppercase text-base shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center gap-2 hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none hover:bg-black hover:text-white transition-all"
+                  className="bg-white w-full border-4 border-black rounded-2xl px-4 py-3 font-black uppercase text-base shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center gap-2 hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none hover:bg-black hover:text-white transition-all"
                 >
                   <Send size={20} /> Kirim Tiket
                 </button>
@@ -113,11 +113,11 @@ export function SupportPage() {
           </div>
 
           {/* Contact Info */}
-          <div className="bg-white border-4 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] outline outline-4 outline-black outline-offset-4 border-dashed border-spacing-4">
+          <div className="bg-white border-4 border-black rounded-2xl p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] outline outline-4 outline-black outline-offset-4 border-dashed border-spacing-4">
             <h2 className="text-lg font-black uppercase mb-6">Kontak Darurat</h2>
             <div className="space-y-4">
               <div className="flex items-center gap-4">
-                <div className="p-3 bg-[#FFFF00] border-4 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                <div className="p-3 bg-[#D4FF00] border-4 border-black rounded-2xl shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                   <Mail size={24} />
                 </div>
                 <div>
@@ -126,7 +126,7 @@ export function SupportPage() {
                 </div>
               </div>
               <div className="flex items-center gap-4">
-                <div className="p-3 bg-[#D9D9D7] border-4 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                <div className="p-3 bg-[#D9D9D7] border-4 border-black rounded-2xl shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                   <Phone size={24} />
                 </div>
                 <div>

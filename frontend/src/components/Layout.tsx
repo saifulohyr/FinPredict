@@ -7,7 +7,7 @@ export function Layout({ children }: { children: ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen flex w-full bg-[#F5F5DC] text-black">
+    <div className="min-h-screen flex w-full bg-[#F0F0F0] text-black">
       {/* Sidebar - Desktop & Mobile */}
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       

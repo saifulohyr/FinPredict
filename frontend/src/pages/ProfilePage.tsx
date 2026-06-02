@@ -117,7 +117,7 @@ export function ProfilePage() {
   };
 
   return (
-    <div className="bg-[#F5F5DC] min-h-screen font-sans text-black p-4 md:p-8 pb-20">
+    <div className="bg-[#F0F0F0] min-h-screen font-sans text-black p-4 md:p-8 pb-20">
       {/* Header */}
       <div className="mb-10 text-left">
         <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter mb-2 italic leading-none">Profile Saya</h1>
@@ -130,13 +130,13 @@ export function ProfilePage() {
         
         {/* KOLOM KIRI: PROFIL DASAR */}
         <div className="col-span-1 md:col-span-12 lg:col-span-7 space-y-8">
-          <div className="bg-white border-4 border-black p-6 md:p-8 shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] outline outline-4 outline-black outline-offset-4">
+          <div className="bg-white border-4 border-black rounded-2xl p-6 md:p-8 shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] outline outline-4 outline-black outline-offset-4">
             <h2 className="text-2xl font-black uppercase mb-8 flex items-center gap-3">
               <User size={28} className="shrink-0" /> Informasi Dasar
             </h2>
 
             {profileMessage && (
-              <div className={`mb-6 p-4 border-4 border-black font-bold uppercase text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] ${profileMessage.type === 'success' ? 'bg-[#7CFF7C] text-black' : 'bg-[#FF4D4D] text-white'}`}>
+              <div className={`mb-6 p-4 border-4 border-black rounded-2xl font-bold uppercase text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] ${profileMessage.type === 'success' ? 'bg-[#A85CF9] text-black' : 'bg-[#FF4D4D] text-white'}`}>
                 {profileMessage.text}
               </div>
             )}
@@ -144,8 +144,8 @@ export function ProfilePage() {
             <form onSubmit={handleSaveProfile} className="space-y-6">
               
               {/* Photo Upload Section */}
-              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 mb-8 p-4 border-4 border-black bg-[#D9D9D7]">
-                <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-black overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white shrink-0">
+              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 mb-8 p-4 border-4 border-black rounded-2xl bg-[#D9D9D7]">
+                <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-black rounded-2xl overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white shrink-0">
                   <img 
                     src={avatarUrl || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200'} 
                     alt="Profile Preview" 
@@ -168,7 +168,7 @@ export function ProfilePage() {
                   <button 
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="w-full sm:w-auto bg-black text-white border-2 border-black px-4 py-2 font-black uppercase text-xs shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] hover:bg-[#FFFF00] hover:text-black hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
+                    className="w-full sm:w-auto bg-black text-white border-2 border-black rounded-xl px-4 py-2 font-black uppercase text-xs shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] hover:bg-[#D4FF00] hover:text-black hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
                   >
                     <ImageIcon size={16} className="inline mr-2" />
                     Pilih File Foto
@@ -177,23 +177,23 @@ export function ProfilePage() {
               </div>
 
               <div>
-                <label className="block text-[10px] font-black uppercase border-2 border-black bg-white px-2 py-0.5 ml-3 -mb-2 relative z-20 w-fit">
+                <label className="block text-[10px] font-black uppercase border-2 border-black rounded-xl bg-white px-2 py-0.5 ml-3 -mb-2 relative z-20 w-fit">
                   ID Akun
                 </label>
-                <div className="w-full border-4 border-black p-4 font-black text-lg bg-gray-200 text-slate-500 outline-none cursor-not-allowed">
+                <div className="w-full border-4 border-black rounded-2xl p-4 font-black text-lg bg-gray-200 text-slate-500 outline-none cursor-not-allowed">
                   {user?.id || 'Tidak diketahui'}
                 </div>
               </div>
 
               <div>
-                <label className="block text-[10px] font-black uppercase border-2 border-black bg-white px-2 py-0.5 ml-3 -mb-2 relative z-20 w-fit">
+                <label className="block text-[10px] font-black uppercase border-2 border-black rounded-xl bg-white px-2 py-0.5 ml-3 -mb-2 relative z-20 w-fit">
                   Nama Lengkap
                 </label>
                 <input 
                   type="text" 
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="w-full border-4 border-black p-4 font-black text-xl focus:bg-[#FFFF00] outline-none transition-colors" 
+                  className="w-full border-4 border-black rounded-2xl p-4 font-black text-xl focus:bg-[#D4FF00] outline-none transition-colors" 
                   placeholder="Nama Lengkap Anda"
                 />
               </div>
@@ -202,7 +202,7 @@ export function ProfilePage() {
                 <button 
                   type="submit"
                   disabled={isProfileLoading}
-                  className="bg-[#7CFF7C] w-full border-4 border-black px-8 py-4 font-black uppercase text-lg shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center gap-2 hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none transition-all disabled:opacity-50"
+                  className="bg-[#A85CF9] w-full border-4 border-black rounded-2xl px-8 py-4 font-black uppercase text-lg shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center gap-2 hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none transition-all disabled:opacity-50"
                 >
                   <Save size={24} /> {isProfileLoading ? 'MENYIMPAN...' : 'SIMPAN PROFIL'}
                 </button>
@@ -213,13 +213,13 @@ export function ProfilePage() {
 
         {/* KOLOM KANAN: KEAMANAN AKUN */}
         <div className="col-span-1 md:col-span-12 lg:col-span-5 space-y-8">
-          <div className="bg-[#FFFF00] border-4 border-black p-6 md:p-8 shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">
+          <div className="bg-[#D4FF00] border-4 border-black rounded-2xl p-6 md:p-8 shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">
             <h2 className="text-2xl font-black uppercase mb-8 flex items-center gap-3">
               <Shield size={28} className="shrink-0" /> Keamanan
             </h2>
 
             {credsMessage && (
-              <div className={`mb-6 p-4 border-4 border-black font-bold uppercase text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] ${credsMessage.type === 'success' ? 'bg-white text-black' : 'bg-[#FF4D4D] text-white'}`}>
+              <div className={`mb-6 p-4 border-4 border-black rounded-2xl font-bold uppercase text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] ${credsMessage.type === 'success' ? 'bg-white text-black' : 'bg-[#FF4D4D] text-white'}`}>
                 {credsMessage.text}
               </div>
             )}
@@ -227,41 +227,41 @@ export function ProfilePage() {
             <form onSubmit={handleSaveCredentials} className="space-y-6">
               
               <div>
-                <label className="block text-[10px] font-black uppercase border-2 border-black bg-white px-2 py-0.5 ml-3 -mb-2 relative z-20 w-fit flex items-center gap-1">
+                <label className="block text-[10px] font-black uppercase border-2 border-black rounded-xl bg-white px-2 py-0.5 ml-3 -mb-2 relative z-20 w-fit flex items-center gap-1">
                   <Mail size={12} /> Email Baru
                 </label>
                 <input 
                   type="email" 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full border-4 border-black p-4 font-black text-lg focus:bg-white outline-none transition-colors bg-[#F5F5DC]" 
+                  className="w-full border-4 border-black rounded-2xl p-4 font-black text-lg focus:bg-white outline-none transition-colors bg-[#F0F0F0]" 
                   placeholder="email@example.com"
                 />
                 <p className="text-[10px] font-bold mt-1 uppercase italic text-black/70">Perubahan email memerlukan verifikasi ke alamat lama & baru.</p>
               </div>
 
               <div className="pt-4 border-t-4 border-black border-dashed">
-                <label className="block text-[10px] font-black uppercase border-2 border-black bg-black text-white px-2 py-0.5 ml-3 -mb-2 relative z-20 w-fit flex items-center gap-1">
+                <label className="block text-[10px] font-black uppercase border-2 border-black rounded-xl bg-black text-white px-2 py-0.5 ml-3 -mb-2 relative z-20 w-fit flex items-center gap-1">
                   <Lock size={12} /> Password Saat Ini
                 </label>
                 <input 
                   type="password" 
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
-                  className="w-full border-4 border-black p-4 font-black text-lg focus:bg-white outline-none transition-colors bg-[#F5F5DC]" 
+                  className="w-full border-4 border-black rounded-2xl p-4 font-black text-lg focus:bg-white outline-none transition-colors bg-[#F0F0F0]" 
                   placeholder="Wajib diisi jika ganti password"
                 />
               </div>
 
               <div>
-                <label className="block text-[10px] font-black uppercase border-2 border-black bg-black text-white px-2 py-0.5 ml-3 -mb-2 relative z-20 w-fit flex items-center gap-1">
+                <label className="block text-[10px] font-black uppercase border-2 border-black rounded-xl bg-black text-white px-2 py-0.5 ml-3 -mb-2 relative z-20 w-fit flex items-center gap-1">
                   <Lock size={12} /> Password Baru
                 </label>
                 <input 
                   type="password" 
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full border-4 border-black p-4 font-black text-lg focus:bg-white outline-none transition-colors bg-[#F5F5DC]" 
+                  className="w-full border-4 border-black rounded-2xl p-4 font-black text-lg focus:bg-white outline-none transition-colors bg-[#F0F0F0]" 
                   placeholder="Kosongkan jika tidak ingin ganti"
                 />
               </div>
@@ -270,7 +270,7 @@ export function ProfilePage() {
                 <button 
                   type="submit"
                   disabled={isCredsLoading}
-                  className="bg-black text-white w-full border-4 border-black px-6 py-4 font-black uppercase text-base shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] flex items-center justify-center gap-2 hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none transition-all disabled:opacity-50 hover:bg-[#FF4D4D]"
+                  className="bg-black text-white w-full border-4 border-black rounded-2xl px-6 py-4 font-black uppercase text-base shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] flex items-center justify-center gap-2 hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none transition-all disabled:opacity-50 hover:bg-[#FF4D4D]"
                 >
                   <Shield size={20} /> {isCredsLoading ? 'MEMPROSES...' : 'UPDATE KEAMANAN'}
                 </button>
