@@ -119,12 +119,26 @@ export const checkEarlyWarning = async (userId: string) => {
   if (totalBudget > 0 && projectedTotal > totalBudget) {
     const overagePercentage = Math.round(((projectedTotal - totalBudget) / totalBudget) * 100);
 
-    await createNotification(
-      userId,
-      '⚠️ Early Warning: Potensi Overspending!',
-      `Prediksi total pengeluaran bulan ini sebesar Rp ${projectedTotal.toLocaleString('id-ID')} (${overagePercentage}% melebihi anggaran Rp ${totalBudget.toLocaleString('id-ID')}). Segera evaluasi pola pengeluaran Anda.`,
-      'WARNING'
-    );
+    // Prevent duplicate spam: check if we already sent a warning today
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const existingWarning = await prisma.notification.findFirst({
+      where: {
+        user_id: userId,
+        title: '⚠️ Early Warning: Potensi Overspending!',
+        created_at: { gte: startOfDay },
+      }
+    });
+
+    if (!existingWarning) {
+      await createNotification(
+        userId,
+        '⚠️ Early Warning: Potensi Overspending!',
+        `Prediksi total pengeluaran bulan ini sebesar Rp ${projectedTotal.toLocaleString('id-ID')} (${overagePercentage}% melebihi anggaran Rp ${totalBudget.toLocaleString('id-ID')}). Segera evaluasi pola pengeluaran Anda.`,
+        'WARNING'
+      );
+    }
   }
 
   return {
