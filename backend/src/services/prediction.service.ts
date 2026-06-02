@@ -12,26 +12,71 @@ export const getLatestPredictions = async (userId: string) => {
 };
 
 export const generatePrediction = async (userId: string) => {
-  // TODO: Replace mock with actual FastAPI call when AI service is ready.
-  // Example of the real implementation:
-  //
-  // const transactions = await prisma.transaction.findMany({
-  //   where: { user_id: userId },
-  //   orderBy: { transaction_date: 'asc' },
-  // });
-  //
-  // const response = await fetch(`${AI_SERVICE_URL}/predict`, {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify({ transactions }),
-  // });
-  //
-  // const aiResult = await response.json();
-
-  // Get historical data to base mock on actual spending patterns
   const now = new Date();
   const thirtyDaysAgo = new Date(now);
   thirtyDaysAgo.setDate(now.getDate() - 30);
+
+  // 1. Dapatkan histori transaksi riil
+  const rawTransactions = await prisma.transaction.findMany({
+    where: { 
+      user_id: userId,
+      transaction_date: { gte: thirtyDaysAgo, lte: now }
+    },
+    include: { category: true },
+    orderBy: { transaction_date: 'asc' },
+  });
+
+  // 2. Siapkan payload untuk LSTM AI Service (butuh sequence_length=30)
+  // Karena transformasi fitur 37 kolom rumit dilakukan di JS, kita petakan kolom dasar
+  // AI Service FastAPI akan menggunakan default 0 untuk fitur yang tidak dikirim.
+  const aiTransactions = [];
+  
+  // Buat mock sequence 30 hari berdasarkan transaksi asli
+  for (let i = 0; i < 30; i++) {
+    const d = new Date(thirtyDaysAgo);
+    d.setDate(d.getDate() + i);
+    
+    // Cari transaksi di hari itu
+    const dayTxns = rawTransactions.filter(t => t.transaction_date.toDateString() === d.toDateString());
+    const expense = dayTxns.filter(t => t.category.type === 'EXPENSE').reduce((sum, t) => sum + Number(t.amount), 0);
+    const income = dayTxns.filter(t => t.category.type === 'INCOME').reduce((sum, t) => sum + Number(t.amount), 0);
+    
+    aiTransactions.push({
+      total_pengeluaran_harian: expense,
+      total_pemasukan_harian: income,
+      hari_dalam_minggu: d.getDay(),
+      hari_dalam_bulan: d.getDate(),
+      bulan: d.getMonth() + 1,
+      is_weekend: (d.getDay() === 0 || d.getDay() === 6) ? 1 : 0
+    });
+  }
+
+  // 3. Call AI Service via API
+  let aiResult: any = null;
+  try {
+    const response = await fetch(`${AI_SERVICE_URL}/predict`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        user_id: userId,
+        transactions: aiTransactions 
+      }),
+    });
+    
+    if (response.ok) {
+      aiResult = await response.json();
+      console.log('✅ AI Service Prediction:', aiResult);
+    } else {
+      console.error('❌ AI Service Error:', await response.text());
+    }
+  } catch (error) {
+    console.error('⚠️ Failed to call AI Service. Is the server running?', error);
+  }
+
+  // 4. Generate data untuk Chart Frontend (skalar per hari)
+  // (Karena LSTM memprediksi AMAN/BAHAYA, bukan nominal, kita gunakan logika historis untuk chart)
+
+  // Get historical data to base mock on actual spending patterns
 
   const recentExpenses = await prisma.transaction.aggregate({
     _avg: { amount: true },
@@ -65,14 +110,38 @@ export const generatePrediction = async (userId: string) => {
         user_id: userId,
         forecast_date: forecastDate,
         predicted_amount: Math.round(predictedAmount * 100) / 100,
-        confidence_score: 0.85 + Math.random() * 0.1,
+        confidence_score: aiResult ? aiResult.probabilitas : (0.85 + Math.random() * 0.1),
       });
     }
 
     await tx.aiPrediction.createMany({ data: predictions });
   });
 
-  // Check for early warnings after generating predictions
+  // 5. Early Warning System (Menggunakan hasil dari AI Service)
+  if (aiResult && aiResult.prediksi_besok === 1) {
+    // Model memprediksi BAHAYA!
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const existingWarning = await prisma.notification.findFirst({
+      where: {
+        user_id: userId,
+        title: '⚠️ AI Peringatan: Risiko Overspending',
+        created_at: { gte: startOfDay },
+      }
+    });
+
+    if (!existingWarning) {
+      await createNotification(
+        userId,
+        '⚠️ AI Peringatan: Risiko Overspending',
+        aiResult.rekomendasi || `AI mendeteksi kemungkinan besar Anda akan melakukan overspending besok. Harap rem pengeluaran Anda!`,
+        'DANGER'
+      );
+    }
+  }
+
+  // Tetap cek budget bulanan standar
   await checkEarlyWarning(userId);
 
   return await getLatestPredictions(userId);
