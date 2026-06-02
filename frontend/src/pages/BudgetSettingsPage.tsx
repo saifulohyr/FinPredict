@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Settings, Wallet, Bell, ShieldCheck, Save, Target } from 'lucide-react';
 import { useBudgets } from '../hooks/useBudgets';
 import { useCategories } from '../hooks/useCategories';
+import { useTransactions } from '../hooks/useTransactions';
 
 export function BudgetSettingsPage() {
   const [isAiActive, setIsAiActive] = useState(true);
@@ -36,6 +37,27 @@ export function BudgetSettingsPage() {
 
   const { useCategoriesQuery } = useCategories();
   const { data: categories = [] } = useCategoriesQuery();
+
+  const { useTransactionsQuery } = useTransactions();
+  const { data: transactions = [] } = useTransactionsQuery();
+
+  const handleExportJson = () => {
+    if (transactions.length === 0) {
+      showToast('Tidak ada data transaksi untuk diekspor.', 'error');
+      return;
+    }
+    const dataStr = JSON.stringify(transactions, null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `finpredict_dataset_${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    showToast('Dataset berhasil diekspor!', 'success');
+  };
 
   useEffect(() => {
     // Find basic categories if they exist in budgets
@@ -195,7 +217,10 @@ export function BudgetSettingsPage() {
             <p className="text-xs font-bold mb-6 leading-relaxed opacity-80 uppercase tracking-wider">
               Data transaksi dienkripsi secara lokal sebelum diproses oleh model LSTM FinPredict.
             </p>
-            <button className="w-full bg-white text-black py-2 font-black uppercase text-[10px] border-2 border-white hover:bg-[#FFFF00] transition-colors shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
+            <button 
+              onClick={handleExportJson}
+              className="w-full bg-white text-black py-2 font-black uppercase text-[10px] border-2 border-white hover:bg-[#FFFF00] transition-colors shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]"
+            >
               Ekspor Dataset (.JSON)
             </button>
           </div>

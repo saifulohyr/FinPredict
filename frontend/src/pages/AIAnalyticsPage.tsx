@@ -10,8 +10,10 @@ import {
 import { BrainCircuit, TrendingUp, AlertTriangle, ShieldCheck, ArrowRight } from 'lucide-react';
 import { usePredictions } from '../hooks/usePredictions';
 import { useNotifications } from '../hooks/useNotifications';
+import { useNavigate } from 'react-router-dom';
 
 export function AIAnalyticsPage() {
+  const navigate = useNavigate();
   const { usePredictionsQuery, useGeneratePredictionMutation } = usePredictions();
   const { data: predictions = [] } = usePredictionsQuery();
   const generateMutation = useGeneratePredictionMutation();
@@ -122,7 +124,10 @@ export function AIAnalyticsPage() {
                 : '"Tidak ada anomali atau peringatan yang signifikan terdeteksi saat ini."'}
             </p>
           </div>
-          <button className="w-full bg-black text-white py-3 font-black uppercase text-[10px] border-2 border-white shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all">
+          <button 
+            onClick={() => navigate('/settings')}
+            className="w-full bg-black text-white py-3 font-black uppercase text-[10px] border-2 border-white shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
+          >
             Sesuaikan Anggaran
           </button>
         </div>
@@ -135,7 +140,10 @@ export function AIAnalyticsPage() {
           <p className="font-bold text-xs md:text-sm mb-6 leading-tight italic">
             "AI menemukan langganan rutin senilai Rp75rb yang tidak digunakan dalam 60 hari. Batalkan untuk menambah surplus."
           </p>
-          <button className="w-full bg-white text-black py-3 font-black uppercase text-[10px] border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all">
+          <button 
+            onClick={() => navigate('/transactions')}
+            className="w-full bg-white text-black py-3 font-black uppercase text-[10px] border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
+          >
             Tinjau Langganan
           </button>
         </div>
@@ -148,7 +156,10 @@ export function AIAnalyticsPage() {
           <p className="font-bold text-xs md:text-sm mb-6 leading-tight italic">
             "Skor kepercayaan tinggi. Anda berada di jalur yang tepat untuk mencapai target tabungan Rp2 Juta di akhir Juni."
           </p>
-          <div className="flex items-center gap-2 font-black text-[10px] uppercase underline cursor-pointer hover:bg-black hover:text-[#FFFF00] transition-colors w-fit px-1">
+          <div 
+            onClick={() => navigate('/transactions')}
+            className="flex items-center gap-2 font-black text-[10px] uppercase underline cursor-pointer hover:bg-black hover:text-[#FFFF00] transition-colors w-fit px-1"
+          >
             Lihat Laporan Lengkap <ArrowRight size={14} />
           </div>
         </div>

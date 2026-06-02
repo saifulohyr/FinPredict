@@ -24,6 +24,11 @@ export function SupportPage() {
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
     if (!message.trim()) return;
+    
+    const subject = encodeURIComponent("Tiket Kendala AI FinPredict");
+    const body = encodeURIComponent(message);
+    window.location.href = `mailto:saifulohyr@gmail.com?subject=${subject}&body=${body}`;
+    
     setIsSent(true);
     setMessage('');
     setTimeout(() => setIsSent(false), 3000);

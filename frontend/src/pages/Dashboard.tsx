@@ -55,15 +55,7 @@ export const Dashboard = () => {
           </div>
         </div>
         
-        <div className="w-full md:w-auto flex flex-col md:items-end">
-          <span className="text-[10px] font-black uppercase mb-1">Pencarian Cepat</span>
-          <div className="bg-white border-4 border-black p-3 md:p-4 w-full md:w-64 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-            <div className="flex justify-between items-center text-slate-400">
-              <span className="text-xs font-bold">Cari wawasan AI...</span>
-              <Search size={18} className="text-black" />
-            </div>
-          </div>
-        </div>
+        {/* Removed Pencarian Cepat for MVP */}
       </div>
 
       {/* Grid System: 1 Kolom di Mobile, 12 Kolom di Desktop */}
@@ -166,18 +158,7 @@ export const Dashboard = () => {
           )}
         </div>
 
-        {/* Market Sentiment Box */}
-        <div className="col-span-1 md:col-span-6 border-4 border-black relative h-[250px] md:h-auto overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] group">
-          <img 
-            src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=800" 
-            alt="Market" 
-            className="w-full h-full object-cover grayscale brightness-50 group-hover:grayscale-0 transition-all duration-500"
-          />
-          <div className="absolute bottom-4 left-4 right-4 bg-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-            <p className="text-[10px] font-black uppercase mb-1">Prediksi Sentimen Pasar</p>
-            <p className="text-xs md:text-sm font-bold italic leading-tight">"Volatilitas tinggi diperkirakan pada sektor teknologi dalam 72 jam ke depan."</p>
-          </div>
-        </div>
+        {/* Removed Market Sentiment Box for MVP */}
       </div>
     </div>
   );
