@@ -6,7 +6,7 @@ import {
   Tooltip, 
   ResponsiveContainer 
 } from 'recharts';
-import { AlertTriangle, BrainCircuit, Calendar, Filter, TrendingUp, TrendingDown, Wallet } from 'lucide-react';
+import { BrainCircuit, Calendar, Filter, TrendingUp, TrendingDown, Wallet } from 'lucide-react';
 import { usePredictions } from '../hooks/usePredictions';
 import { useTransactions } from '../hooks/useTransactions';
 import { useNavigate } from 'react-router-dom';

@@ -267,7 +267,7 @@ export function AIAnalyticsPage() {
                 <YAxis axisLine={{ strokeWidth: 4 }} tick={{ fontWeight: 'bold', fontSize: 10 }} width={60} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
                 <Tooltip 
                   contentStyle={{ border: '4px solid black', fontWeight: 'bold', borderRadius: '12px', fontSize: '12px' }}
-                  formatter={(value: number) => [`Rp${value.toLocaleString('id-ID')}`, undefined]}
+                  formatter={(value: any) => [`Rp${Number(value).toLocaleString('id-ID')}`, undefined]}
                 />
                 <Line 
                   type="monotone" 
@@ -307,7 +307,7 @@ export function AIAnalyticsPage() {
                   <YAxis dataKey="name" type="category" width={100} tick={{ fontWeight: 'bold', fontSize: 11 }} />
                   <Tooltip 
                     contentStyle={{ border: '4px solid black', fontWeight: 'bold', borderRadius: '12px', fontSize: '12px' }}
-                    formatter={(value: number) => [`Rp${value.toLocaleString('id-ID')}`, 'Jumlah']}
+                    formatter={(value: any) => [`Rp${Number(value).toLocaleString('id-ID')}`, 'Jumlah']}
                   />
                   <Bar dataKey="amount" radius={[0, 8, 8, 0]} barSize={24}>
                     {categoryBarData.map((_entry, index) => (
