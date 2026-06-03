@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router-dom';
 export const Dashboard = () => {
   const navigate = useNavigate();
   const { usePredictionsQuery, useWarningStatusQuery, useAiAnalysisResultQuery } = usePredictions();
-  const { useTransactionSummaryQuery } = useTransactions();
+  const { useTransactionSummaryQuery, useTransactionsQuery } = useTransactions();
 
   const { data: predictionsData } = usePredictionsQuery();
   const predictions = predictionsData?.predictions || predictionsData || [];
@@ -22,16 +22,45 @@ export const Dashboard = () => {
   const { data: summary } = useTransactionSummaryQuery();
   const { data: aiResult } = useAiAnalysisResultQuery();
 
-  const chartData = (Array.isArray(predictions) ? predictions : []).map((p: any) => {
-    const d = new Date(p.forecast_date);
-    return {
-      name: `${d.getDate()} ${d.toLocaleString('id-ID', { month: 'short' }).toUpperCase()}`,
-      value: Number(p.predicted_amount)
-    };
-  });
+  const { data: allTransactions = [] } = useTransactionsQuery();
+
+  const chartData = (() => {
+    const now = new Date();
+    const thirtyDaysAgo = new Date(now);
+    thirtyDaysAgo.setDate(now.getDate() - 30);
+
+    const dailyActual: Record<string, number> = {};
+    allTransactions.forEach((t: any) => {
+      const d = new Date(t.transaction_date);
+      if (d >= thirtyDaysAgo && d <= now && t.category.type === 'EXPENSE') {
+        const key = d.toISOString().split('T')[0];
+        dailyActual[key] = (dailyActual[key] || 0) + Number(t.amount);
+      }
+    });
+
+    const historicalData = Object.entries(dailyActual)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([dateStr, amount]) => {
+        const d = new Date(dateStr);
+        return {
+          name: `${d.getDate()} ${d.toLocaleString('id-ID', { month: 'short' }).toUpperCase()}`,
+          value: amount, // 'value' used in Dashboard
+        };
+      });
+
+    const predictionData = (Array.isArray(predictions) ? predictions : []).map((p: any) => {
+      const d = new Date(p.forecast_date);
+      return {
+        name: `${d.getDate()} ${d.toLocaleString('id-ID', { month: 'short' }).toUpperCase()}`,
+        value: Number(p.predicted_amount)
+      };
+    });
+
+    return [...historicalData.slice(-15), ...predictionData.slice(0, 15)];
+  })();
 
   // Use actual + predicted for projected total (not just warningStatus which requires budgets)
-  const actualExpense = warningStatus?.actualExpense || 0;
+  const actualExpense = warningStatus?.actualExpense || summary?.totalExpense || 0;
   const predictedExpense = warningStatus?.predictedExpense || 0;
   const projectedTotal = actualExpense + predictedExpense;
   
