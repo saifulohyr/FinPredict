@@ -8,7 +8,7 @@ export const usePredictions = () => {
     queryKey: ['predictions'],
     queryFn: async () => {
       const { data } = await api.get('/predictions');
-      // Backend now returns { predictions, lastGeneratedAt }
+      // Backend returns { predictions, lastGeneratedAt }
       return data.data;
     },
   });
@@ -17,6 +17,15 @@ export const usePredictions = () => {
     queryKey: ['warningStatus'],
     queryFn: async () => {
       const { data } = await api.get('/predictions/warning');
+      return data.data;
+    },
+  });
+
+  const useAiAnalysisResultQuery = () => useQuery({
+    queryKey: ['aiAnalysisResult'],
+    queryFn: async () => {
+      const { data } = await api.get('/predictions/ai-result');
+      // Returns: { ai_status, risk_probability, rekomendasi, model_digunakan, generated_at } or null
       return data.data;
     },
   });
@@ -30,12 +39,14 @@ export const usePredictions = () => {
       queryClient.invalidateQueries({ queryKey: ['predictions'] });
       queryClient.invalidateQueries({ queryKey: ['warningStatus'] });
       queryClient.invalidateQueries({ queryKey: ['notifications'] });
+      queryClient.invalidateQueries({ queryKey: ['aiAnalysisResult'] });
     },
   });
 
   return {
     usePredictionsQuery,
     useWarningStatusQuery,
+    useAiAnalysisResultQuery,
     useGeneratePredictionMutation,
   };
 };

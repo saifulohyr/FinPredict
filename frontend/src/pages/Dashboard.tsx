@@ -6,20 +6,21 @@ import {
   Tooltip, 
   ResponsiveContainer 
 } from 'recharts';
-import { AlertTriangle, Calendar, Filter, TrendingUp, TrendingDown, Wallet } from 'lucide-react';
+import { AlertTriangle, BrainCircuit, Calendar, Filter, TrendingUp, TrendingDown, Wallet } from 'lucide-react';
 import { usePredictions } from '../hooks/usePredictions';
 import { useTransactions } from '../hooks/useTransactions';
 import { useNavigate } from 'react-router-dom';
 
 export const Dashboard = () => {
   const navigate = useNavigate();
-  const { usePredictionsQuery, useWarningStatusQuery } = usePredictions();
+  const { usePredictionsQuery, useWarningStatusQuery, useAiAnalysisResultQuery } = usePredictions();
   const { useTransactionSummaryQuery } = useTransactions();
 
   const { data: predictionsData } = usePredictionsQuery();
   const predictions = predictionsData?.predictions || predictionsData || [];
   const { data: warningStatus } = useWarningStatusQuery();
   const { data: summary } = useTransactionSummaryQuery();
+  const { data: aiResult } = useAiAnalysisResultQuery();
 
   const chartData = (Array.isArray(predictions) ? predictions : []).map((p: any) => {
     const d = new Date(p.forecast_date);
@@ -61,7 +62,7 @@ export const Dashboard = () => {
               AI AKTIF
             </span>
             <span className="bg-black text-white px-3 py-1 text-[10px] md:text-xs font-bold border-2 border-black rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-              STATUS: <span className="text-[#4ade80]">{warningStatus?.isOverBudget ? 'BAHAYA' : 'AMAN'}</span>
+              STATUS: <span className={aiResult?.ai_status === 'BAHAYA' ? 'text-[#FF6B6B]' : 'text-[#4ade80]'}>{aiResult?.ai_status || 'UNAVAILABLE'}</span>
             </span>
           </div>
         </div>
@@ -139,37 +140,59 @@ export const Dashboard = () => {
               <p className="text-xl md:text-2xl font-black leading-tight">Rp{projectedTotal.toLocaleString('id-ID')}</p>
             </div>
             <div className="bg-[#D9D9D9] border-4 border-black rounded-2xl p-4 flex-1 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-              <p className="text-[10px] font-black uppercase">Status AI</p>
+              <p className="text-[10px] font-black uppercase">Status Early Warning</p>
               <p className="text-xl md:text-2xl font-black uppercase">{warningStatus?.isOverBudget ? 'Waspada' : 'Aman'}</p>
             </div>
           </div>
         </div>
 
-        {/* Early Warning Side Card */}
-        <div className="col-span-1 md:col-span-12 lg:col-span-4 bg-[#B22222] border-4 border-black rounded-2xl p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-white">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="bg-white p-2 border-2 border-black rounded-xl text-[#B22222] shrink-0">
-              <AlertTriangle size={32} />
+        {/* AI Risk Assessment Card */}
+        <div className="col-span-1 md:col-span-12 lg:col-span-4 bg-[#1A1A1A] border-4 border-black rounded-2xl p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-white flex flex-col">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="bg-[#4ade80] p-2 border-2 border-black rounded-xl text-black shrink-0">
+              <BrainCircuit size={24} />
             </div>
-            <h2 className="text-2xl md:text-3xl lg:text-2xl xl:text-3xl font-black uppercase leading-none break-words min-w-0">Peringatan Dini</h2>
+            <h2 className="text-xl md:text-2xl font-black uppercase leading-none text-[#4ade80]">Analisis Risiko AI</h2>
           </div>
           
-          {warningStatus?.isOverBudget ? (
-            <>
-              <p className="font-bold mb-8 text-base md:text-lg leading-tight italic">
-                Prediksi total pengeluaran bulan ini sebesar Rp {(warningStatus.projectedTotal || projectedTotal).toLocaleString('id-ID')} 
-                melebihi anggaran Anda (Rp {warningStatus.totalBudget.toLocaleString('id-ID')}).
-              </p>
-              <div className="space-y-3">
-                <button onClick={() => navigate('/transactions')} className="w-full bg-white text-[#B22222] border-4 border-black rounded-2xl py-3 font-black uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all">
-                  Tinjau Pengeluaran
-                </button>
+          {aiResult ? (
+            <div className="flex-1 flex flex-col justify-between">
+              <div>
+                <div className="flex justify-between items-end mb-2">
+                  <div className="text-[10px] md:text-xs font-black uppercase">
+                    Status: <span className={aiResult.ai_status === 'BAHAYA' ? 'text-[#FF6B6B]' : 'text-[#4ade80]'}>{aiResult.ai_status}</span>
+                  </div>
+                  <div className="text-[10px] md:text-xs font-black uppercase">
+                    Risk Score: {aiResult.risk_probability >= 0 ? `${Math.round(aiResult.risk_probability * 100)}%` : 'N/A'}
+                  </div>
+                </div>
+                
+                {/* Progress bar */}
+                <div className="w-full h-4 bg-white/20 border-2 border-white rounded mb-6 relative overflow-hidden">
+                  <div 
+                    className={`h-full ${aiResult.ai_status === 'BAHAYA' ? 'bg-[#FF6B6B]' : 'bg-[#4ade80]'}`}
+                    style={{ width: `${aiResult.risk_probability >= 0 ? Math.round(aiResult.risk_probability * 100) : 0}%` }}
+                  ></div>
+                </div>
+
+                <p className="font-bold mb-6 text-sm md:text-base leading-tight italic text-slate-300">
+                  "{aiResult.rekomendasi}"
+                </p>
               </div>
-            </>
+              
+              <button onClick={() => navigate('/analytics')} className="w-full bg-[#4ade80] text-black border-4 border-[#4ade80] rounded-2xl py-3 font-black uppercase text-[10px] shadow-[4px_4px_0px_0px_rgba(74,222,128,0.5)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all">
+                Lihat Detail Analisis
+              </button>
+            </div>
           ) : (
-             <p className="font-bold mb-8 text-base md:text-lg leading-tight italic">
-               Pengeluaran Anda saat ini diprediksi masih dalam batas aman. Pertahankan pola keuangan Anda!
-             </p>
+             <div className="flex-1 flex flex-col justify-center items-center text-center">
+               <p className="font-bold mb-6 text-sm md:text-base leading-tight italic text-slate-400">
+                 Belum ada data analisis AI.
+               </p>
+               <button onClick={() => navigate('/analytics')} className="w-full bg-white text-black border-4 border-white rounded-2xl py-3 font-black uppercase text-[10px] shadow-[4px_4px_0px_0px_rgba(255,255,255,0.5)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all">
+                 Generate AI Pertama Kali
+               </button>
+             </div>
           )}
         </div>
 

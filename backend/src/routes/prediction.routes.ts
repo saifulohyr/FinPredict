@@ -116,4 +116,42 @@ router.post('/generate', predictionController.generatePrediction);
  */
 router.get('/warning', predictionController.getWarningStatus);
 
+/**
+ * @openapi
+ * /predictions/ai-result:
+ *   get:
+ *     tags: [Predictions]
+ *     summary: Get latest AI analysis result
+ *     description: Returns the most recent real LSTM prediction result (AMAN/BAHAYA status, risk probability, recommendation).
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Latest AI analysis result
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     ai_status:
+ *                       type: string
+ *                       description: "AMAN, BAHAYA, INSUFFICIENT_DATA, or UNAVAILABLE"
+ *                     risk_probability:
+ *                       type: number
+ *                       description: Between 0.0 and 1.0
+ *                     rekomendasi:
+ *                       type: string
+ *                     model_digunakan:
+ *                       type: string
+ *                     generated_at:
+ *                       type: string
+ *                       format: date-time
+ */
+router.get('/ai-result', predictionController.getAiAnalysisResult);
+
 export default router;

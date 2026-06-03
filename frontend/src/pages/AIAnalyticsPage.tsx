@@ -19,7 +19,8 @@ import { useNavigate } from 'react-router-dom';
 
 export function AIAnalyticsPage() {
   const navigate = useNavigate();
-  const { usePredictionsQuery, useGeneratePredictionMutation, useWarningStatusQuery } = usePredictions();
+  const { usePredictionsQuery, useGeneratePredictionMutation, useWarningStatusQuery, useAiAnalysisResultQuery } = usePredictions();
+  const { data: aiResult } = useAiAnalysisResultQuery();
   const { data: predictionsData } = usePredictionsQuery();
   const predictions = predictionsData?.predictions || predictionsData || [];
   const lastGeneratedAt = predictionsData?.lastGeneratedAt || null;
@@ -136,7 +137,7 @@ export function AIAnalyticsPage() {
         <div className="bg-black text-white p-4 border-4 border-black rounded-2xl shadow-[6px_6px_0px_0px_rgba(74,222,128,1)] self-start md:self-auto flex items-center gap-4">
           <div>
             <p className="text-[10px] font-black uppercase text-[#4ade80]">Status AI</p>
-            <p className="text-2xl md:text-3xl font-black italic">{warningStatus?.isOverBudget ? 'WASPADA' : 'AMAN'}</p>
+            <p className={`text-2xl md:text-3xl font-black italic ${aiResult?.ai_status === 'BAHAYA' ? 'text-[#FF6B6B]' : ''}`}>{aiResult?.ai_status || 'UNAVAILABLE'}</p>
           </div>
           <button 
             onClick={handleGenerate}
@@ -190,6 +191,58 @@ export function AIAnalyticsPage() {
             </p>
           </div>
         </div>
+      </div>
+
+      {/* AI Risk Assessment Primary Section */}
+      <div className="bg-black border-4 border-black rounded-2xl p-6 md:p-8 shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] text-white mb-8 text-left">
+        <h2 className="text-xl md:text-2xl font-black uppercase mb-6 flex items-center gap-2 text-[#4ade80]">
+          <BrainCircuit size={28} /> Hasil Analisis Model LSTM
+        </h2>
+        
+        {aiResult ? (
+          <div className="flex flex-col lg:flex-row gap-8">
+            <div className="flex-1">
+              <div className="text-[10px] md:text-xs font-black uppercase mb-2 text-slate-400">Prediksi Risiko</div>
+              <div className={`inline-block border-4 rounded-2xl px-6 py-4 text-2xl md:text-4xl font-black uppercase italic shadow-[6px_6px_0px_0px_rgba(255,255,255,0.2)] mb-6 ${aiResult.ai_status === 'BAHAYA' ? 'border-[#FF6B6B] text-[#FF6B6B] bg-[#FF6B6B]/10' : 'border-[#4ade80] text-[#4ade80] bg-[#4ade80]/10'}`}>
+                {aiResult.ai_status === 'BAHAYA' ? '⚠️ BAHAYA' : '✅ AMAN'}
+              </div>
+              <div className="text-[10px] md:text-xs font-black uppercase mb-1 text-slate-400">
+                Model: {aiResult.model_digunakan} | Threshold: 0.55
+              </div>
+            </div>
+            
+            <div className="flex-1">
+              <div className="flex justify-between items-end mb-2">
+                <div className="text-[10px] md:text-xs font-black uppercase text-[#4ade80]">Probabilitas Risiko</div>
+                <div className="text-xl font-black">{aiResult.risk_probability >= 0 ? `${Math.round(aiResult.risk_probability * 100)}%` : 'N/A'}</div>
+              </div>
+              <div className="w-full h-6 bg-white/20 border-2 border-white rounded mb-6 relative overflow-hidden">
+                <div 
+                  className={`h-full ${aiResult.ai_status === 'BAHAYA' ? 'bg-[#FF6B6B]' : 'bg-[#4ade80]'}`}
+                  style={{ width: `${aiResult.risk_probability >= 0 ? Math.round(aiResult.risk_probability * 100) : 0}%` }}
+                ></div>
+              </div>
+              
+              <div className="bg-white/10 border-l-4 border-[#4ade80] p-4 rounded-r-xl">
+                <p className="font-bold text-sm md:text-base italic">
+                  "{aiResult.rekomendasi}"
+                </p>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="text-center py-8">
+            <p className="font-bold mb-4">Data analisis AI belum tersedia.</p>
+            <button 
+              onClick={handleGenerate}
+              disabled={generateMutation.isPending}
+              className="bg-[#4ade80] text-black border-2 border-white px-6 py-3 font-black uppercase text-sm shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] disabled:opacity-50 rounded-xl inline-flex items-center gap-2"
+            >
+              <RefreshCw size={16} className={generateMutation.isPending ? 'animate-spin' : ''} />
+              {generateMutation.isPending ? 'Memproses...' : 'Generate AI Sekarang'}
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 text-left">

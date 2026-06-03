@@ -31,10 +31,11 @@ model Profile {
   updated_at   DateTime       @updatedAt
   
   // Relations
-  transactions Transaction[]
-  budgets      Budget[]
-  predictions  AiPrediction[]
+  transactions  Transaction[]
+  budgets       Budget[]
+  predictions   AiPrediction[]
   notifications Notification[]
+  aiResults     AiAnalysisResult[]
 
   @@map("profiles")
 }
@@ -115,4 +116,20 @@ model Notification {
   user Profile @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@map("notifications")
+}
+
+// 7. AI Analysis Results (Real LSTM Output Storage)
+model AiAnalysisResult {
+  id               String   @id @default(uuid()) @db.Uuid
+  user_id          String   @db.Uuid
+  ai_status        String   // "AMAN", "BAHAYA", "INSUFFICIENT_DATA"
+  risk_probability Float    // probabilitas dari LSTM (0.0 - 1.0)
+  rekomendasi      String   // teks rekomendasi dari AI
+  model_digunakan  String   @default("LSTM")
+  generated_at     DateTime @default(now())
+
+  // Relations
+  user Profile @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("ai_analysis_results")
 }
