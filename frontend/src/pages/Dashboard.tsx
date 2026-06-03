@@ -9,6 +9,7 @@ import {
 import { BrainCircuit, TrendingUp, TrendingDown, Wallet, AlertTriangle } from 'lucide-react';
 import { usePredictions } from '../hooks/usePredictions';
 import { useTransactions } from '../hooks/useTransactions';
+import { useBudgets } from '../hooks/useBudgets';
 import { useNavigate } from 'react-router-dom';
 
 export const Dashboard = () => {
@@ -21,6 +22,10 @@ export const Dashboard = () => {
   const { data: warningStatus } = useWarningStatusQuery();
   const { data: summary } = useTransactionSummaryQuery();
   const { data: aiResult } = useAiAnalysisResultQuery();
+
+  const { useBudgetsQuery } = useBudgets();
+  const { data: budgets = [] } = useBudgetsQuery();
+  const calculatedTotalBudget = budgets.reduce((acc: number, curr: any) => acc + Number(curr.monthly_limit), 0);
 
   const { data: allTransactions = [] } = useTransactionsQuery();
 
@@ -184,7 +189,7 @@ export const Dashboard = () => {
               <h2 className="text-xl md:text-2xl font-black uppercase leading-none tracking-tight">Peringatan Dini</h2>
             </div>
             <p className="font-bold mb-6 text-sm md:text-base leading-tight italic">
-              Prediksi total pengeluaran bulan ini sebesar Rp{projectedTotal.toLocaleString('id-ID')} melebihi anggaran Anda (Rp{(warningStatus?.totalBudget || 0).toLocaleString('id-ID')}).
+              Prediksi total pengeluaran bulan ini sebesar Rp{projectedTotal.toLocaleString('id-ID')} melebihi anggaran Anda (Rp{(warningStatus?.totalBudget || calculatedTotalBudget || 0).toLocaleString('id-ID')}).
             </p>
             <button onClick={() => navigate('/transactions')} className="w-full bg-white text-black border-4 border-black rounded-2xl py-3 font-black uppercase text-xs md:text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all">
               Tinjau Pengeluaran
