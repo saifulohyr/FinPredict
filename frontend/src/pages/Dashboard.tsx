@@ -6,7 +6,7 @@ import {
   Tooltip, 
   ResponsiveContainer 
 } from 'recharts';
-import { BrainCircuit, Calendar, Filter, TrendingUp, TrendingDown, Wallet } from 'lucide-react';
+import { BrainCircuit, Calendar, Filter, TrendingUp, TrendingDown, Wallet, AlertTriangle } from 'lucide-react';
 import { usePredictions } from '../hooks/usePredictions';
 import { useTransactions } from '../hooks/useTransactions';
 import { useNavigate } from 'react-router-dom';
@@ -146,8 +146,28 @@ export const Dashboard = () => {
           </div>
         </div>
 
-        {/* AI Risk Assessment Card */}
-        <div className="col-span-1 md:col-span-12 lg:col-span-4 bg-[#1A1A1A] border-4 border-black rounded-2xl p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-white flex flex-col">
+        {/* Right Column: Alerts & AI Risk */}
+        <div className="col-span-1 md:col-span-12 lg:col-span-4 flex flex-col gap-6">
+          {/* Peringatan Dini Card */}
+          {warningStatus?.isOverBudget && (
+            <div className="bg-[#B22222] border-4 border-black rounded-2xl p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-white">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="bg-white p-1 border-2 border-black rounded-lg text-black shrink-0">
+                  <AlertTriangle size={20} className="text-[#B22222]" />
+                </div>
+                <h2 className="text-xl md:text-2xl font-black uppercase leading-none tracking-tight">Peringatan Dini</h2>
+              </div>
+              <p className="font-bold mb-6 text-sm md:text-base leading-tight italic">
+                Prediksi total pengeluaran bulan ini sebesar Rp{projectedTotal.toLocaleString('id-ID')} melebihi anggaran Anda (Rp{(warningStatus?.totalBudget || 0).toLocaleString('id-ID')}).
+              </p>
+              <button onClick={() => navigate('/transactions')} className="w-full bg-white text-black border-4 border-black rounded-2xl py-3 font-black uppercase text-xs md:text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all">
+                Tinjau Pengeluaran
+              </button>
+            </div>
+          )}
+
+          {/* AI Risk Assessment Card */}
+          <div className="bg-[#1A1A1A] border-4 border-black rounded-2xl p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-white flex-1 flex flex-col">
           <div className="flex items-center gap-3 mb-6">
             <div className="bg-[#4ade80] p-2 border-2 border-black rounded-xl text-black shrink-0">
               <BrainCircuit size={24} />
@@ -194,6 +214,7 @@ export const Dashboard = () => {
                </button>
              </div>
           )}
+          </div>
         </div>
 
         {/* Asset Distribution Card */}

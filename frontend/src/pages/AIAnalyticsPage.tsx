@@ -1,15 +1,13 @@
 import { useState } from 'react';
 import { 
-  LineChart, 
-  Line, 
+  BarChart,
+  Bar,
+  Cell,
   XAxis, 
   YAxis, 
   CartesianGrid, 
   Tooltip, 
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  Cell,
+  ResponsiveContainer
 } from 'recharts';
 import { BrainCircuit, TrendingUp, TrendingDown, AlertTriangle, ShieldCheck, ArrowRight, Wallet, RefreshCw } from 'lucide-react';
 import { usePredictions } from '../hooks/usePredictions';
@@ -247,52 +245,6 @@ export function AIAnalyticsPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 text-left">
         
-        {/* MAIN CHART: Cash Flow Projection */}
-        <div className="col-span-1 md:col-span-12 bg-white border-4 border-black rounded-2xl p-4 md:p-6 shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] outline outline-4 outline-black outline-offset-4">
-          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4">
-            <h2 className="text-xl md:text-2xl font-black uppercase flex items-center gap-2">
-              <BrainCircuit size={28} className="shrink-0" /> Proyeksi Arus Kas
-            </h2>
-            <div className="flex flex-wrap gap-4 text-[9px] md:text-[10px] font-black uppercase">
-              <div className="flex items-center gap-1"><div className="w-6 h-1 bg-black rounded"></div> Data Riil</div>
-              <div className="flex items-center gap-1"><div className="w-6 h-1 bg-[#4ade80] rounded" style={{backgroundImage: 'repeating-linear-gradient(90deg, #4ade80 0, #4ade80 4px, transparent 4px, transparent 8px)'}}></div> Prediksi AI</div>
-            </div>
-          </div>
-          
-          <div className="h-[250px] md:h-[350px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={chartData.length > 0 ? chartData : [{ name: 'No Data', prediksi: 0, aktual: 0 }]}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ddd" />
-                <XAxis dataKey="name" axisLine={{ strokeWidth: 4 }} tick={{ fontWeight: 'bold', fontSize: 10 }} />
-                <YAxis axisLine={{ strokeWidth: 4 }} tick={{ fontWeight: 'bold', fontSize: 10 }} width={60} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
-                <Tooltip 
-                  contentStyle={{ border: '4px solid black', fontWeight: 'bold', borderRadius: '12px', fontSize: '12px' }}
-                  formatter={(value: any) => [`Rp${Number(value).toLocaleString('id-ID')}`, undefined]}
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="aktual" 
-                  stroke="black" 
-                  strokeWidth={4} 
-                  dot={{ r: 4, fill: 'black' }} 
-                  connectNulls={false}
-                  name="Data Riil"
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="prediksi" 
-                  stroke="#4ade80" 
-                  strokeWidth={4} 
-                  strokeDasharray="8 8" 
-                  dot={{ r: 4, fill: '#4ade80', stroke: 'black', strokeWidth: 2 }} 
-                  connectNulls={false}
-                  name="Prediksi AI"
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
         {/* BAR CHART: Distribution per Category */}
         {categoryBarData.length > 0 && (
           <div className="col-span-1 md:col-span-12 lg:col-span-6 bg-white border-4 border-black rounded-2xl p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
