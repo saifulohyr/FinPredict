@@ -103,6 +103,51 @@ export const Dashboard = () => {
         </div>
       </div>
 
+      {/* 25% Predictive Alert Pitching Banner */}
+      <div className="bg-[#4ade80] border-4 border-black rounded-2xl p-6 md:p-8 shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] mb-8 flex flex-col gap-6 text-left">
+        <div className="bg-white border-4 border-black px-4 md:px-6 py-2 md:py-3 w-fit rounded-xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] -ml-2 -mt-2">
+          <h2 className="text-xl md:text-3xl font-black uppercase tracking-tighter leading-none italic">
+            SOLUSI KAMI: THE 25% PREDICTIVE ALERT
+          </h2>
+        </div>
+        
+        <div className="flex flex-col lg:flex-row gap-6 md:gap-8 items-stretch">
+          {/* Left Column: Terminal & Explanation */}
+          <div className="flex-1 flex flex-col gap-4">
+            <div className="bg-black border-4 border-black rounded-xl p-4 md:p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,0.5)]">
+              <pre className="text-[#4ade80] font-mono font-bold text-xs md:text-sm whitespace-pre-wrap leading-relaxed">
+{`IF pengeluaran_2_hari_pertama > 
+(0.25 * total_anggaran):
+    TRIGGER = 'Status Tidak Sehat'`}
+              </pre>
+            </div>
+            <div className="bg-white border-4 border-black rounded-xl p-4 md:p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,0.5)] flex-1 flex items-center">
+              <p className="font-bold text-xs md:text-sm leading-tight italic">
+                Aplikasi mengimplementasikan aturan ketat ambang batas (threshold-based). Jika AI mendeteksi anomali pengeluaran melebihi 25% sesaat setelah gajian, sistem langsung memproyeksikan tanggal habisnya saldo secara visual dan memicu intervensi psikologis.
+              </p>
+            </div>
+          </div>
+          
+          {/* Right Column: Red Alert Card */}
+          <div className="flex-1">
+            <div className="bg-[#B22222] border-4 border-black rounded-2xl p-6 md:p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-white h-full flex flex-col justify-center gap-6">
+              <div className="flex items-center gap-3 bg-[#8B0000] p-3 rounded-xl border-2 border-black/30 w-fit">
+                <div className="bg-white p-1 border-2 border-black rounded-lg text-black shrink-0">
+                  <AlertTriangle size={20} className="text-[#B22222]" />
+                </div>
+                <h2 className="text-xl md:text-2xl font-black uppercase leading-none tracking-tight">Peringatan Dini</h2>
+              </div>
+              <p className="font-bold text-sm md:text-base leading-relaxed italic">
+                Prediksi total pengeluaran bulan ini sebesar Rp{projectedTotal.toLocaleString('id-ID')} melebihi anggaran Anda (Rp{(warningStatus?.totalBudget || 0).toLocaleString('id-ID')}).
+              </p>
+              <button onClick={() => navigate('/transactions')} className="w-full bg-white text-black border-4 border-black rounded-xl py-3 font-black uppercase text-xs md:text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all mt-auto">
+                Tinjau Pengeluaran
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Grid System */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6 text-left">
         
@@ -144,24 +189,6 @@ export const Dashboard = () => {
 
         {/* Right Column: Alerts & AI Risk */}
         <div className="col-span-1 md:col-span-12 lg:col-span-4 flex flex-col gap-6">
-          {/* Peringatan Dini Card */}
-          {warningStatus?.isOverBudget && (
-            <div className="bg-[#B22222] border-4 border-black rounded-2xl p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-white">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="bg-white p-1 border-2 border-black rounded-lg text-black shrink-0">
-                  <AlertTriangle size={20} className="text-[#B22222]" />
-                </div>
-                <h2 className="text-xl md:text-2xl font-black uppercase leading-none tracking-tight">Peringatan Dini</h2>
-              </div>
-              <p className="font-bold mb-6 text-sm md:text-base leading-tight italic">
-                Prediksi total pengeluaran bulan ini sebesar Rp{projectedTotal.toLocaleString('id-ID')} melebihi anggaran Anda (Rp{(warningStatus?.totalBudget || 0).toLocaleString('id-ID')}).
-              </p>
-              <button onClick={() => navigate('/transactions')} className="w-full bg-white text-black border-4 border-black rounded-2xl py-3 font-black uppercase text-xs md:text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all">
-                Tinjau Pengeluaran
-              </button>
-            </div>
-          )}
-
           {/* AI Risk Assessment Card */}
           <div className="bg-[#1A1A1A] border-4 border-black rounded-2xl p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-white flex-1 flex flex-col">
           <div className="flex items-center gap-3 mb-6">
