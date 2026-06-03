@@ -6,7 +6,7 @@ import {
   Tooltip, 
   ResponsiveContainer 
 } from 'recharts';
-import { BrainCircuit, Calendar, Filter, TrendingUp, TrendingDown, Wallet, AlertTriangle } from 'lucide-react';
+import { BrainCircuit, TrendingUp, TrendingDown, Wallet, AlertTriangle } from 'lucide-react';
 import { usePredictions } from '../hooks/usePredictions';
 import { useTransactions } from '../hooks/useTransactions';
 import { useNavigate } from 'react-router-dom';
@@ -110,10 +110,6 @@ export const Dashboard = () => {
         <div className="col-span-1 md:col-span-12 lg:col-span-8 bg-white border-4 border-black rounded-2xl p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-xl md:text-2xl font-black uppercase italic">Proyeksi Saldo</h2>
-            <div className="flex gap-2">
-              <button onClick={() => alert('Fitur Kalender akan segera hadir di versi mendatang!')} className="border-2 border-black rounded-xl p-1 hover:bg-[#D4FF00] transition-colors"><Calendar size={20}/></button>
-              <button onClick={() => alert('Fitur Filter akan segera hadir di versi mendatang!')} className="border-2 border-black rounded-xl p-1 hover:bg-[#D4FF00] transition-colors"><Filter size={20}/></button>
-            </div>
           </div>
 
           <div className="h-[250px] md:h-[300px] w-full mb-6">
