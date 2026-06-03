@@ -70,7 +70,20 @@ export function Navbar({ onMenuClick }: { onMenuClick: () => void }) {
                         {!n.is_read && <div className="w-2 h-2 rounded-full bg-[#FF4D4D] border border-black shrink-0"></div>}
                       </div>
                       <p className="font-bold text-xs leading-tight normal-case">{n.message}</p>
-                      <p className="text-[9px] font-bold text-slate-500 mt-2">{new Date(n.created_at).toLocaleDateString('id-ID')}</p>
+                      <div className="flex justify-between items-center mt-2">
+                        <p className="text-[9px] font-bold text-slate-500">{new Date(n.created_at).toLocaleDateString('id-ID')}</p>
+                        {!n.is_read && (
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              markAsReadMutation.mutate(n.id);
+                            }}
+                            className="text-[9px] font-black uppercase text-[#A85CF9] hover:underline"
+                          >
+                            [Telah Dibaca]
+                          </button>
+                        )}
+                      </div>
                     </div>
                   ))
                 ) : (

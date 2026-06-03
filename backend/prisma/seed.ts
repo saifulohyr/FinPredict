@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import { PrismaClient, CategoryType } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -11,6 +12,7 @@ async function main() {
     { name: 'Freelance', type: CategoryType.INCOME, icon: 'laptop' },
     { name: 'Investasi', type: CategoryType.INCOME, icon: 'trending-up' },
     { name: 'Bonus', type: CategoryType.INCOME, icon: 'gift' },
+    { name: 'Pemasukan Tetap', type: CategoryType.INCOME, icon: 'briefcase' },
 
     // --- PENGELUARAN (EXPENSE) ---
     { name: 'Makanan & Minuman', type: CategoryType.EXPENSE, icon: 'utensils' },
@@ -21,6 +23,7 @@ async function main() {
     { name: 'Kesehatan', type: CategoryType.EXPENSE, icon: 'heart-pulse' },
     { name: 'Tagihan & Listrik', type: CategoryType.EXPENSE, icon: 'receipt' },
     { name: 'Sewa Tempat', type: CategoryType.EXPENSE, icon: 'home' },
+    { name: 'Target Tabungan', type: CategoryType.EXPENSE, icon: 'target' },
   ];
 
   for (const category of categories) {

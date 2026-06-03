@@ -1,7 +1,7 @@
 import { prisma } from '../config/prisma';
 import { Prisma } from '@prisma/client';
 import { parse } from 'csv-parse/sync';
-
+import { createNotification } from './notification.service';
 // --- Type definitions ---
 interface CreateTransactionInput {
   category_id: number;
@@ -27,7 +27,7 @@ interface TransactionFilters {
 // --- Service functions ---
 
 export const createTransaction = async (userId: string, data: CreateTransactionInput) => {
-  return await prisma.transaction.create({
+  const transaction = await prisma.transaction.create({
     data: {
       user_id: userId,
       category_id: data.category_id,
@@ -39,6 +39,17 @@ export const createTransaction = async (userId: string, data: CreateTransactionI
       category: true,
     },
   });
+
+  if (transaction.category.type === 'EXPENSE' && data.amount > 500000) {
+    await createNotification(
+      userId,
+      'Pengeluaran Besar Terdeteksi',
+      `Anda baru saja mencatat pengeluaran sebesar Rp ${data.amount.toLocaleString('id-ID')} untuk kategori ${transaction.category.name}.`,
+      'WARNING'
+    );
+  }
+
+  return transaction;
 };
 
 export const getTransactions = async (userId: string, filters: TransactionFilters = {}) => {
