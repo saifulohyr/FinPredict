@@ -14,7 +14,6 @@ export function Navbar({ onMenuClick }: { onMenuClick: () => void }) {
   const logout = useAuthStore(state => state.logout);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifMenu, setShowNotifMenu] = useState(false);
-  const [hiddenNotifs, setHiddenNotifs] = useState<string[]>([]);
   return (
     <header className="h-20 bg-[#F0F0F0] border-b-4 border-black flex items-center justify-between px-4 md:px-8">
       {/* Mobile Menu & Logo */}
@@ -52,11 +51,17 @@ export function Navbar({ onMenuClick }: { onMenuClick: () => void }) {
             </button>
             {showNotifMenu && (
               <div className="absolute right-0 top-12 mt-2 w-72 md:w-80 max-w-[90vw] bg-white border-4 border-black rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] z-50 max-h-96 overflow-y-auto">
-                <div className="p-3 border-b-4 border-black bg-[#D4FF00]">
+                <div className="p-3 border-b-4 border-black bg-[#D4FF00] flex justify-between items-center">
                   <p className="font-black text-sm uppercase">Peringatan ({unreadCount})</p>
+                  <button 
+                    onClick={() => setShowNotifMenu(false)}
+                    className="text-black hover:text-[#FF4D4D] transition-colors p-1"
+                  >
+                    <X size={18} strokeWidth={3} />
+                  </button>
                 </div>
-                {notifications.filter((n: any) => !hiddenNotifs.includes(n.id)).length > 0 ? (
-                  notifications.filter((n: any) => !hiddenNotifs.includes(n.id)).map((n: any) => (
+                {notifications.length > 0 ? (
+                  notifications.map((n: any) => (
                     <div 
                       key={n.id} 
                       onClick={() => {
@@ -68,19 +73,7 @@ export function Navbar({ onMenuClick }: { onMenuClick: () => void }) {
                     >
                       <div className="flex justify-between items-start gap-2">
                         <p className="font-black text-[10px] uppercase text-[#B22222] mb-1 flex-1">{(n.type === 'WARNING' || n.type === 'DANGER') ? '⚠️ ' : ''}{n.title}</p>
-                        <div className="flex items-center gap-2 shrink-0">
-                          {!n.is_read && <div className="w-2 h-2 rounded-full bg-[#FF4D4D] border border-black"></div>}
-                          <button 
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setHiddenNotifs([...hiddenNotifs, n.id]);
-                              if (!n.is_read) markAsReadMutation.mutate(n.id);
-                            }}
-                            className="text-black hover:text-[#FF4D4D] transition-colors"
-                          >
-                            <X size={14} strokeWidth={3} />
-                          </button>
-                        </div>
+                        {!n.is_read && <div className="w-2 h-2 rounded-full bg-[#FF4D4D] border border-black shrink-0"></div>}
                       </div>
                       <p className="font-bold text-xs leading-tight normal-case">{n.message}</p>
                       <div className="flex justify-between items-center mt-2">
