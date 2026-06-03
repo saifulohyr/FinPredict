@@ -7,7 +7,9 @@ import {
   YAxis, 
   CartesianGrid, 
   Tooltip, 
-  ResponsiveContainer
+  ResponsiveContainer,
+  LineChart,
+  Line
 } from 'recharts';
 import { BrainCircuit, TrendingUp, TrendingDown, AlertTriangle, ShieldCheck, ArrowRight, Wallet, RefreshCw } from 'lucide-react';
 import { usePredictions } from '../hooks/usePredictions';
@@ -46,7 +48,43 @@ export function AIAnalyticsPage() {
   const topCategory = Object.entries(expenseByCategory).sort(([,a], [,b]) => Number(b) - Number(a))[0];
   const topCatName = topCategory ? topCategory[0] : null;
 
+  const predictions = predictionsData?.predictions || predictionsData || [];
 
+  // --- Chart Data: Combine ACTUAL historical + PREDICTED ---
+  const now = new Date();
+  const thirtyDaysAgo = new Date(now);
+  thirtyDaysAgo.setDate(now.getDate() - 30);
+
+  const dailyActual: Record<string, number> = {};
+  allTransactions.forEach((t: any) => {
+    const d = new Date(t.transaction_date);
+    if (d >= thirtyDaysAgo && d <= now && t.category.type === 'EXPENSE') {
+      const key = d.toISOString().split('T')[0];
+      dailyActual[key] = (dailyActual[key] || 0) + Number(t.amount);
+    }
+  });
+
+  const historicalData = Object.entries(dailyActual)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([dateStr, amount]) => {
+      const d = new Date(dateStr);
+      return {
+        name: `${d.getDate()} ${d.toLocaleString('id-ID', { month: 'short' }).toUpperCase()}`,
+        aktual: amount,
+        prediksi: null as number | null,
+      };
+    });
+
+  const predictionData = (Array.isArray(predictions) ? predictions : []).map((p: any) => {
+    const d = new Date(p.forecast_date);
+    return {
+      name: `${d.getDate()} ${d.toLocaleString('id-ID', { month: 'short' }).toUpperCase()}`,
+      aktual: null as number | null,
+      prediksi: Number(p.predicted_amount),
+    };
+  });
+
+  const chartData = [...historicalData.slice(-15), ...predictionData.slice(0, 15)];
 
   // --- Category Bar Chart ---
   const categoryBarData = Object.entries(expenseByCategory)
@@ -118,38 +156,23 @@ export function AIAnalyticsPage() {
         </div>
       )}
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-        <div className="bg-[#80FF80] border-4 border-black rounded-2xl p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] flex items-center gap-3">
-          <div className="bg-white border-2 border-black rounded-xl p-2 shrink-0">
-            <TrendingUp size={20} className="text-[#1A4D2E]" />
-          </div>
-          <div className="text-left">
-            <p className="text-[10px] font-black uppercase">Pemasukan Bulan Ini</p>
-            <p className="text-lg md:text-xl font-black leading-tight">Rp{totalIncome.toLocaleString('id-ID')}</p>
-          </div>
-        </div>
-
-        <div className="bg-[#FFB6C1] border-4 border-black rounded-2xl p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] flex items-center gap-3">
-          <div className="bg-white border-2 border-black rounded-xl p-2 shrink-0">
-            <TrendingDown size={20} className="text-[#B22222]" />
-          </div>
-          <div className="text-left">
-            <p className="text-[10px] font-black uppercase">Pengeluaran Bulan Ini</p>
-            <p className="text-lg md:text-xl font-black leading-tight">Rp{totalExpense.toLocaleString('id-ID')}</p>
-          </div>
-        </div>
-
-        <div className={`${balance >= 0 ? 'bg-[#D4FF00]' : 'bg-[#FF6B6B]'} border-4 border-black rounded-2xl p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] flex items-center gap-3`}>
-          <div className="bg-white border-2 border-black rounded-xl p-2 shrink-0">
-            <Wallet size={20} />
-          </div>
-          <div className="text-left">
-            <p className="text-[10px] font-black uppercase">Saldo Bersih</p>
-            <p className="text-lg md:text-xl font-black leading-tight">
-              {balance >= 0 ? '' : '-'}Rp{Math.abs(balance).toLocaleString('id-ID')}
-            </p>
-          </div>
+      {/* MAIN CHART: Cash Flow Projection */}
+      <div className="bg-white border-4 border-black rounded-2xl p-4 md:p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-left mb-8">
+        <h2 className="text-xl md:text-2xl font-black uppercase mb-6 italic">Proyeksi Arus Kas</h2>
+        <div className="h-[250px] md:h-[300px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ddd" />
+              <XAxis dataKey="name" tick={{ fontWeight: 'bold', fontSize: 10 }} />
+              <YAxis tick={{ fontWeight: 'bold', fontSize: 10 }} tickFormatter={(value) => `${value / 1000}k`} />
+              <Tooltip 
+                contentStyle={{ border: '4px solid black', fontWeight: 'bold', borderRadius: '12px', fontSize: '12px' }}
+                formatter={(value: any) => [`Rp${Number(value).toLocaleString('id-ID')}`, 'Jumlah']}
+              />
+              <Line type="monotone" dataKey="aktual" stroke="#1A4D2E" strokeWidth={4} dot={{ r: 4, strokeWidth: 2 }} activeDot={{ r: 6 }} name="Aktual" />
+              <Line type="monotone" dataKey="prediksi" stroke="#B22222" strokeWidth={4} strokeDasharray="5 5" dot={{ r: 4, strokeWidth: 2 }} activeDot={{ r: 6 }} name="Prediksi AI" />
+            </LineChart>
+          </ResponsiveContainer>
         </div>
       </div>
 
