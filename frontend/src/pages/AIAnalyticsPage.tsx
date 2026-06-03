@@ -11,7 +11,7 @@ import {
   LineChart,
   Line
 } from 'recharts';
-import { BrainCircuit, TrendingUp, TrendingDown, AlertTriangle, ShieldCheck, ArrowRight, Wallet, RefreshCw } from 'lucide-react';
+import { BrainCircuit, TrendingUp, AlertTriangle, ShieldCheck, ArrowRight, RefreshCw } from 'lucide-react';
 import { usePredictions } from '../hooks/usePredictions';
 import { useNotifications } from '../hooks/useNotifications';
 import { useTransactions } from '../hooks/useTransactions';
@@ -43,7 +43,6 @@ export function AIAnalyticsPage() {
   // Summary data
   const totalIncome = summary?.totalIncome || 0;
   const totalExpense = summary?.totalExpense || 0;
-  const balance = summary?.balance || (totalIncome - totalExpense);
   const expenseByCategory = summary?.expenseByCategory || {};
   const topCategory = Object.entries(expenseByCategory).sort(([,a], [,b]) => Number(b) - Number(a))[0];
   const topCatName = topCategory ? topCategory[0] : null;
