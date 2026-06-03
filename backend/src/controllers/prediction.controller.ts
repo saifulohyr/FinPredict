@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import * as predictionService from '../services/prediction.service';
+import { getLastGeneratedAt } from '../services/prediction.service';
 
 export const generatePrediction = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -22,10 +23,14 @@ export const getPredictions = async (req: Request, res: Response): Promise<void>
   try {
     const userId = req.user!.sub;
     const predictions = await predictionService.getLatestPredictions(userId);
+    const lastGeneratedAt = await getLastGeneratedAt(userId);
     
     res.json({
       status: 'success',
-      data: predictions,
+      data: {
+        predictions,
+        lastGeneratedAt,
+      },
     });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown error';

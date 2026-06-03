@@ -8,6 +8,7 @@ export const usePredictions = () => {
     queryKey: ['predictions'],
     queryFn: async () => {
       const { data } = await api.get('/predictions');
+      // Backend now returns { predictions, lastGeneratedAt }
       return data.data;
     },
   });

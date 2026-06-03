@@ -5,10 +5,20 @@ import { getBudgets } from './budget.service';
 const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
 
 export const getLatestPredictions = async (userId: string) => {
-  return await prisma.aiPrediction.findMany({
+  const predictions = await prisma.aiPrediction.findMany({
     where: { user_id: userId },
     orderBy: { forecast_date: 'asc' },
   });
+  return predictions;
+};
+
+export const getLastGeneratedAt = async (userId: string) => {
+  const latest = await prisma.aiPrediction.findFirst({
+    where: { user_id: userId },
+    orderBy: { generated_at: 'desc' },
+    select: { generated_at: true },
+  });
+  return latest?.generated_at || null;
 };
 
 export const generatePrediction = async (userId: string) => {

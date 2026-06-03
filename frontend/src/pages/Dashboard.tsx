@@ -6,7 +6,7 @@ import {
   Tooltip, 
   ResponsiveContainer 
 } from 'recharts';
-import { AlertTriangle, Calendar, Filter } from 'lucide-react';
+import { AlertTriangle, Calendar, Filter, TrendingUp, TrendingDown, Wallet } from 'lucide-react';
 import { usePredictions } from '../hooks/usePredictions';
 import { useTransactions } from '../hooks/useTransactions';
 import { useNavigate } from 'react-router-dom';
@@ -16,11 +16,12 @@ export const Dashboard = () => {
   const { usePredictionsQuery, useWarningStatusQuery } = usePredictions();
   const { useTransactionSummaryQuery } = useTransactions();
 
-  const { data: predictions = [] } = usePredictionsQuery();
+  const { data: predictionsData } = usePredictionsQuery();
+  const predictions = predictionsData?.predictions || predictionsData || [];
   const { data: warningStatus } = useWarningStatusQuery();
   const { data: summary } = useTransactionSummaryQuery();
 
-  const chartData = predictions.map((p: any) => {
+  const chartData = (Array.isArray(predictions) ? predictions : []).map((p: any) => {
     const d = new Date(p.forecast_date);
     return {
       name: `${d.getDate()} ${d.toLocaleString('id-ID', { month: 'short' }).toUpperCase()}`,
@@ -28,14 +29,18 @@ export const Dashboard = () => {
     };
   });
 
-  const latestPred = predictions[predictions.length - 1];
-  const accuracyScore = latestPred ? Math.round(latestPred.confidence_score * 100) : 94;
-
-  const projectedTotal = warningStatus?.projectedTotal || 0;
+  // Use actual + predicted for projected total (not just warningStatus which requires budgets)
+  const actualExpense = warningStatus?.actualExpense || 0;
+  const predictedExpense = warningStatus?.predictedExpense || 0;
+  const projectedTotal = actualExpense + predictedExpense;
   
+  // Summary data for the month
+  const totalIncome = summary?.totalIncome || 0;
+  const totalExpense = summary?.totalExpense || 0;
+  const balance = summary?.balance || (totalIncome - totalExpense);
+
   // Calculate distribution data from summary
   const expenseByCategory = summary?.expenseByCategory || {};
-  const totalExpense = summary?.totalExpense || 0;
   
   // Sort categories by amount
   const sortedCategories = Object.entries(expenseByCategory)
@@ -43,10 +48,11 @@ export const Dashboard = () => {
     .slice(0, 3); // top 3
 
   const colors = ['#80FF80', '#FFB6C1', '#D9D9D9'];
+
   return (
     <div className="bg-[#F0F0F0] min-h-screen p-4 md:p-8 font-sans text-black">
       
-      {/* Header Section: Responsif Stack di Mobile, Row di Desktop */}
+      {/* Header Section */}
       <div className="flex flex-col md:flex-row justify-between items-start mb-8 gap-6 text-left">
         <div>
           <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter mb-2 italic">Dashboard</h1>
@@ -55,18 +61,51 @@ export const Dashboard = () => {
               AI AKTIF
             </span>
             <span className="bg-black text-white px-3 py-1 text-[10px] md:text-xs font-bold border-2 border-black rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-              AKURASI: <span className="text-[#4ade80]">{accuracyScore}%</span>
+              STATUS: <span className="text-[#4ade80]">{warningStatus?.isOverBudget ? 'BAHAYA' : 'AMAN'}</span>
             </span>
           </div>
         </div>
-        
-        {/* Removed Pencarian Cepat for MVP */}
       </div>
 
-      {/* Grid System: 1 Kolom di Mobile, 12 Kolom di Desktop */}
+      {/* Summary Cards: Pemasukan, Pengeluaran, Saldo Bersih */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+        <div className="bg-[#80FF80] border-4 border-black rounded-2xl p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] flex items-center gap-4">
+          <div className="bg-white border-2 border-black rounded-xl p-2 shrink-0">
+            <TrendingUp size={24} className="text-[#1A4D2E]" />
+          </div>
+          <div className="text-left">
+            <p className="text-[10px] font-black uppercase">Pemasukan Bulan Ini</p>
+            <p className="text-xl md:text-2xl font-black leading-tight">Rp{totalIncome.toLocaleString('id-ID')}</p>
+          </div>
+        </div>
+
+        <div className="bg-[#FFB6C1] border-4 border-black rounded-2xl p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] flex items-center gap-4">
+          <div className="bg-white border-2 border-black rounded-xl p-2 shrink-0">
+            <TrendingDown size={24} className="text-[#B22222]" />
+          </div>
+          <div className="text-left">
+            <p className="text-[10px] font-black uppercase">Pengeluaran Bulan Ini</p>
+            <p className="text-xl md:text-2xl font-black leading-tight">Rp{totalExpense.toLocaleString('id-ID')}</p>
+          </div>
+        </div>
+
+        <div className={`${balance >= 0 ? 'bg-[#D4FF00]' : 'bg-[#FF6B6B]'} border-4 border-black rounded-2xl p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] flex items-center gap-4`}>
+          <div className="bg-white border-2 border-black rounded-xl p-2 shrink-0">
+            <Wallet size={24} />
+          </div>
+          <div className="text-left">
+            <p className="text-[10px] font-black uppercase">Saldo Bersih</p>
+            <p className="text-xl md:text-2xl font-black leading-tight">
+              {balance >= 0 ? '' : '-'}Rp{Math.abs(balance).toLocaleString('id-ID')}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Grid System */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6 text-left">
         
-        {/* Main Forecast Chart Card: Full di mobile, 8 kolom di desktop */}
+        {/* Main Forecast Chart Card */}
         <div className="col-span-1 md:col-span-12 lg:col-span-8 bg-white border-4 border-black rounded-2xl p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-xl md:text-2xl font-black uppercase italic">Proyeksi Saldo</h2>
@@ -96,12 +135,12 @@ export const Dashboard = () => {
 
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="bg-[#4ade80] border-4 border-black rounded-2xl p-4 flex-1 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-              <p className="text-[10px] font-black uppercase">Terproyeksi</p>
+              <p className="text-[10px] font-black uppercase">Terproyeksi (Pengeluaran)</p>
               <p className="text-xl md:text-2xl font-black leading-tight">Rp{projectedTotal.toLocaleString('id-ID')}</p>
             </div>
             <div className="bg-[#D9D9D9] border-4 border-black rounded-2xl p-4 flex-1 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-              <p className="text-[10px] font-black uppercase">Tingkat Keyakinan</p>
-              <p className="text-xl md:text-2xl font-black uppercase">Tinggi</p>
+              <p className="text-[10px] font-black uppercase">Status AI</p>
+              <p className="text-xl md:text-2xl font-black uppercase">{warningStatus?.isOverBudget ? 'Waspada' : 'Aman'}</p>
             </div>
           </div>
         </div>
@@ -118,7 +157,7 @@ export const Dashboard = () => {
           {warningStatus?.isOverBudget ? (
             <>
               <p className="font-bold mb-8 text-base md:text-lg leading-tight italic">
-                Prediksi total pengeluaran bulan ini sebesar Rp {warningStatus.projectedTotal.toLocaleString('id-ID')} 
+                Prediksi total pengeluaran bulan ini sebesar Rp {(warningStatus.projectedTotal || projectedTotal).toLocaleString('id-ID')} 
                 melebihi anggaran Anda (Rp {warningStatus.totalBudget.toLocaleString('id-ID')}).
               </p>
               <div className="space-y-3">
@@ -163,7 +202,30 @@ export const Dashboard = () => {
           )}
         </div>
 
-        {/* Removed Market Sentiment Box for MVP */}
+        {/* Quick Actions Card - replaces removed Market Sentiment */}
+        <div className="col-span-1 md:col-span-6 bg-black text-white border-4 border-black rounded-2xl p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+          <h2 className="text-2xl font-black uppercase mb-6 italic text-left text-[#4ade80]">Aksi Cepat</h2>
+          <div className="space-y-4">
+            <button 
+              onClick={() => navigate('/transactions')} 
+              className="w-full bg-[#4ade80] text-black border-4 border-[#4ade80] rounded-2xl py-3 font-black uppercase text-sm shadow-[4px_4px_0px_0px_rgba(74,222,128,0.5)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
+            >
+              + Catat Transaksi Baru
+            </button>
+            <button 
+              onClick={() => navigate('/analytics')} 
+              className="w-full bg-transparent text-white border-4 border-white rounded-2xl py-3 font-black uppercase text-sm shadow-[4px_4px_0px_0px_rgba(255,255,255,0.3)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
+            >
+              Lihat Analisis AI
+            </button>
+            <button 
+              onClick={() => navigate('/budgets')} 
+              className="w-full bg-[#D4FF00] text-black border-4 border-[#D4FF00] rounded-2xl py-3 font-black uppercase text-sm shadow-[4px_4px_0px_0px_rgba(212,255,0,0.5)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
+            >
+              Atur Anggaran
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
