@@ -200,7 +200,7 @@ export function BudgetSettingsPage() {
               <div className="bg-[#D4FF00] border-4 border-black rounded-2xl p-6 flex flex-col justify-center items-center text-center shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
                 <Target size={40} className="mb-2" />
                 <p className="font-black text-xs uppercase mb-1 text-black">Anggaran Aman (Prediksi AI)</p>
-                <p className="text-4xl font-black leading-none italic">Rp {(Number(fixedIncome.replace(/\./g, '')) - Number(savingsTarget.replace(/\./g, ''))).toLocaleString('id-ID')}</p>
+                <p className="text-4xl font-black leading-none italic">Rp {(fixedIncome && savingsTarget) ? ((Number(fixedIncome.replace(/\./g, '')) || 0) - (Number(savingsTarget.replace(/\./g, '')) || 0)).toLocaleString('id-ID') : '0'}</p>
                 <p className="text-[10px] font-bold mt-2 uppercase">Batas pengeluaran bulanan agar target tercapai.</p>
               </div>
             </div>

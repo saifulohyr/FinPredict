@@ -187,14 +187,7 @@ export function ProfilePage() {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-[10px] font-black uppercase border-2 border-black rounded-xl bg-white px-2 py-0.5 ml-3 -mb-2 relative z-20 w-fit">
-                  ID Akun
-                </label>
-                <div className="w-full border-4 border-black rounded-2xl p-4 font-black text-lg bg-gray-200 text-slate-500 outline-none cursor-not-allowed">
-                  {user?.id || 'Tidak diketahui'}
-                </div>
-              </div>
+
 
               <div>
                 <label className="block text-[10px] font-black uppercase border-2 border-black rounded-xl bg-white px-2 py-0.5 ml-3 -mb-2 relative z-20 w-fit">

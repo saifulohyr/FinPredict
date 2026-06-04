@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, Zap } from 'lucide-react';
+import { Eye, EyeOff, Zap, ArrowLeft } from 'lucide-react';
 import api from '../lib/api';
 import { useAuthStore } from '../store/authStore';
 
@@ -170,6 +170,15 @@ export function LoginPage() {
               {isLoading ? 'Initializing...' : 'Initialize Session'}
             </button>
           </form>
+
+          <div className="mt-6 text-center">
+            <button 
+              onClick={() => navigate('/')}
+              className="inline-flex items-center gap-2 font-black uppercase text-xs text-slate-500 hover:text-black transition-colors"
+            >
+              <ArrowLeft size={14} /> Kembali ke Halaman Utama
+            </button>
+          </div>
 
         </div>
       </div>
