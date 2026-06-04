@@ -15,6 +15,7 @@ import { BrainCircuit, TrendingUp, AlertTriangle, ShieldCheck, ArrowRight, Refre
 import { usePredictions } from '../hooks/usePredictions';
 import { useNotifications } from '../hooks/useNotifications';
 import { useTransactions } from '../hooks/useTransactions';
+import { useSettings } from '../hooks/useSettings';
 import { useNavigate } from 'react-router-dom';
 
 export function AIAnalyticsPage() {
@@ -35,6 +36,10 @@ export function AIAnalyticsPage() {
   const { data: allTransactions = [] } = useTransactionsQuery();
   
   const { data: warningStatus } = useWarningStatusQuery();
+
+  const { useSettingsQuery } = useSettings();
+  const { data: userSettings } = useSettingsQuery();
+  const isAiEnabled = userSettings?.ai_enabled !== false;
 
   // Sort warnings (from notifications) including DANGER from AI
   const warnings = notifications.filter((n: any) => n.type === 'WARNING' || n.type === 'DANGER').sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
@@ -124,7 +129,7 @@ export function AIAnalyticsPage() {
           <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter mb-2 italic leading-none">Analisis AI</h1>
           <div className="flex flex-wrap gap-2">
             <span className="bg-[#4ade80] text-black px-3 py-1 text-[10px] md:text-xs font-black border-2 border-black rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-              MODEL: LSTM-V3
+              MODEL: {aiResult?.model_digunakan || 'LSTM'}
             </span>
             <span className="bg-white text-black px-3 py-1 text-[10px] md:text-xs font-black border-2 border-black rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] uppercase">
               Generate Terakhir: {formatLastGenerated(lastGeneratedAt)}
@@ -138,11 +143,12 @@ export function AIAnalyticsPage() {
           </div>
           <button 
             onClick={handleGenerate}
-            disabled={generateMutation.isPending}
+            disabled={generateMutation.isPending || !isAiEnabled}
+            title={!isAiEnabled ? 'Mode AI dimatikan. Aktifkan di Pengaturan.' : ''}
             className="ml-4 bg-[#4ade80] text-black border-2 border-white px-4 py-2 font-black uppercase text-xs shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] disabled:opacity-50 flex items-center gap-2 rounded-xl"
           >
             <RefreshCw size={14} className={generateMutation.isPending ? 'animate-spin' : ''} />
-            {generateMutation.isPending ? 'Memproses...' : 'Generate AI'}
+            {!isAiEnabled ? 'AI Dimatikan' : generateMutation.isPending ? 'Memproses...' : 'Generate AI'}
           </button>
         </div>
       </div>
@@ -189,7 +195,7 @@ export function AIAnalyticsPage() {
                 {aiResult.ai_status === 'BAHAYA' ? '⚠️ BAHAYA' : '✅ AMAN'}
               </div>
               <div className="text-[10px] md:text-xs font-black uppercase mb-1 text-slate-400">
-                Model: {aiResult.model_digunakan} | Threshold: 0.55
+                Model: {aiResult.model_digunakan} | Threshold: 0.55 (Default)
               </div>
             </div>
             

@@ -29,6 +29,11 @@ model Profile {
   avatar_url   String?
   created_at   DateTime       @default(now())
   updated_at   DateTime       @updatedAt
+
+  // User Settings
+  ai_enabled          Boolean @default(true)  // Toggle AI Engine LSTM
+  notif_high_spending Boolean @default(true)  // Peringatan Pengeluaran Tinggi
+  notif_low_balance   Boolean @default(true)  // Prediksi Saldo Rendah
   
   // Relations
   transactions  Transaction[]

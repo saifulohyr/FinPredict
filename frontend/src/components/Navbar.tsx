@@ -2,12 +2,24 @@ import { Bell, User, Menu, LogOut, X } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useNotifications } from '../hooks/useNotifications';
+import { useSettings } from '../hooks/useSettings';
 import { useAuthStore } from '../store/authStore';
 
 export function Navbar({ onMenuClick }: { onMenuClick: () => void }) {
   const { useNotificationsQuery, useMarkAsReadMutation } = useNotifications();
-  const { data: notifications = [] } = useNotificationsQuery();
+  const { data: rawNotifications = [] } = useNotificationsQuery();
   const markAsReadMutation = useMarkAsReadMutation();
+
+  const { useSettingsQuery } = useSettings();
+  const { data: userSettings } = useSettingsQuery();
+
+  // Filter notifications based on user preferences
+  const notifications = rawNotifications.filter((n: any) => {
+    if (userSettings?.notif_high_spending === false && n.type === 'WARNING' && n.title?.includes('Overspending')) return false;
+    if (userSettings?.notif_low_balance === false && n.type === 'DANGER' && n.title?.includes('Risiko')) return false;
+    return true;
+  });
+
   const unreadCount = notifications.filter((n: any) => !n.is_read).length;
   
   const user = useAuthStore(state => state.user);

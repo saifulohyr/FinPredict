@@ -145,15 +145,26 @@ export function ProfilePage() {
               
               {/* Photo Upload Section */}
               <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 mb-8 p-4 border-4 border-black rounded-2xl bg-[#D9D9D7]">
-                <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-black rounded-2xl overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white shrink-0">
-                  <img 
-                    src={avatarUrl || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200'} 
-                    alt="Profile Preview" 
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200';
-                    }}
-                  />
+                <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-black overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white shrink-0">
+                  {avatarUrl ? (
+                    <img 
+                      src={avatarUrl} 
+                      alt="Profile Preview" 
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = 'none';
+                        (e.target as HTMLImageElement).parentElement!.classList.add('flex', 'items-center', 'justify-center', 'bg-[#A85CF9]');
+                        const span = document.createElement('span');
+                        span.className = 'text-4xl sm:text-5xl font-black text-white uppercase';
+                        span.textContent = fullName?.charAt(0) || '?';
+                        (e.target as HTMLImageElement).parentElement!.appendChild(span);
+                      }}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-[#A85CF9]">
+                      <span className="text-4xl sm:text-5xl font-black text-white uppercase">{fullName?.charAt(0) || '?'}</span>
+                    </div>
+                  )}
                 </div>
                 <div className="flex flex-col justify-center items-center sm:items-start space-y-3 w-full">
                   <p className="font-black uppercase text-sm">Foto Profil</p>

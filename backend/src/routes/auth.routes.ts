@@ -246,4 +246,21 @@ router.put('/credentials', requireAuth, authController.updateCredentials);
  */
 router.post('/avatar', requireAuth, upload.single('avatar'), authController.uploadAvatar);
 
+/**
+ * @openapi
+ * /auth/settings:
+ *   get:
+ *     tags: [Auth]
+ *     summary: Get user settings (AI mode, notification preferences)
+ *     security:
+ *       - BearerAuth: []
+ *   put:
+ *     tags: [Auth]
+ *     summary: Update user settings
+ *     security:
+ *       - BearerAuth: []
+ */
+router.get('/settings', requireAuth, authController.getSettings);
+router.put('/settings', requireAuth, authController.updateSettings);
+
 export default router;

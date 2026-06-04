@@ -344,3 +344,64 @@ export const uploadAvatar = async (req: Request, res: Response): Promise<void> =
     res.status(500).json({ status: 'error', message });
   }
 };
+
+/**
+ * GET /api/auth/settings
+ * Returns user settings (AI mode, notification preferences).
+ */
+export const getSettings = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userId = req.user!.sub;
+    const profile = await prisma.profile.findUnique({
+      where: { id: userId },
+      select: {
+        ai_enabled: true,
+        notif_high_spending: true,
+        notif_low_balance: true,
+      },
+    });
+    if (!profile) {
+      res.status(404).json({ status: 'error', message: 'Profile not found.' });
+      return;
+    }
+    res.json({ status: 'success', data: profile });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    console.error('❌ getSettings error:', message);
+    res.status(500).json({ status: 'error', message });
+  }
+};
+
+/**
+ * PUT /api/auth/settings
+ * Updates user settings (AI mode, notification preferences).
+ */
+export const updateSettings = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userId = req.user!.sub;
+    const { ai_enabled, notif_high_spending, notif_low_balance } = req.body;
+    const existing = await prisma.profile.findUnique({ where: { id: userId } });
+    if (!existing) {
+      res.status(404).json({ status: 'error', message: 'Profile not found.' });
+      return;
+    }
+    const updated = await prisma.profile.update({
+      where: { id: userId },
+      data: {
+        ...(ai_enabled !== undefined && { ai_enabled: Boolean(ai_enabled) }),
+        ...(notif_high_spending !== undefined && { notif_high_spending: Boolean(notif_high_spending) }),
+        ...(notif_low_balance !== undefined && { notif_low_balance: Boolean(notif_low_balance) }),
+      },
+      select: {
+        ai_enabled: true,
+        notif_high_spending: true,
+        notif_low_balance: true,
+      },
+    });
+    res.json({ status: 'success', data: updated });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    console.error('❌ updateSettings error:', message);
+    res.status(500).json({ status: 'error', message });
+  }
+};

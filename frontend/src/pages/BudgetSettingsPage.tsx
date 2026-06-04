@@ -3,12 +3,30 @@ import { Settings, Wallet, Bell, ShieldCheck, Save, Target } from 'lucide-react'
 import { useBudgets } from '../hooks/useBudgets';
 import { useCategories } from '../hooks/useCategories';
 import { useTransactions } from '../hooks/useTransactions';
+import { useSettings } from '../hooks/useSettings';
 
 export function BudgetSettingsPage() {
   const [isAiActive, setIsAiActive] = useState(true);
-  const [fixedIncome, setFixedIncome] = useState('7.500.000');
-  const [savingsTarget, setSavingsTarget] = useState('2.000.000');
+  const [notifHighSpending, setNotifHighSpending] = useState(true);
+  const [notifLowBalance, setNotifLowBalance] = useState(true);
+  const [fixedIncome, setFixedIncome] = useState('');
+  const [savingsTarget, setSavingsTarget] = useState('');
+  const [validationErrors, setValidationErrors] = useState<{ income?: boolean; savings?: boolean }>({});
   const [toastMessage, setToastMessage] = useState<{ text: string, type: 'success' | 'error' } | null>(null);
+
+  // Settings from backend
+  const { useSettingsQuery, useUpdateSettingsMutation } = useSettings();
+  const { data: userSettings } = useSettingsQuery();
+  const updateSettingsMutation = useUpdateSettingsMutation();
+
+  // Sync settings from backend
+  useEffect(() => {
+    if (userSettings) {
+      setIsAiActive(userSettings.ai_enabled);
+      setNotifHighSpending(userSettings.notif_high_spending);
+      setNotifLowBalance(userSettings.notif_low_balance);
+    }
+  }, [userSettings]);
 
   const showToast = (text: string, type: 'success' | 'error') => {
     setToastMessage({ text, type });
@@ -69,6 +87,20 @@ export function BudgetSettingsPage() {
   }, [budgets]);
 
   const handleSave = async () => {
+    // Validation
+    const errors: { income?: boolean; savings?: boolean } = {};
+    const incomeVal = Number(fixedIncome.replace(/\./g, ''));
+    const savingsVal = Number(savingsTarget.replace(/\./g, ''));
+    if (!fixedIncome || incomeVal <= 0) errors.income = true;
+    if (!savingsTarget || savingsVal <= 0) errors.savings = true;
+    
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      showToast('Pemasukan tetap dan target tabungan wajib diisi!', 'error');
+      return;
+    }
+    setValidationErrors({});
+
     try {
       // Find category IDs
       const incomeCat = categories.find((c: any) => c.type === 'INCOME');
@@ -80,17 +112,24 @@ export function BudgetSettingsPage() {
       if (incomeCat && fixedIncome) {
         promises.push(upsertMutation.mutateAsync({
           category_id: incomeCat.id,
-          monthly_limit: Number(fixedIncome.replace(/\./g, '')),
+          monthly_limit: incomeVal,
           month_year: currentMonth
         }));
       }
       if (savingCat && savingsTarget) {
         promises.push(upsertMutation.mutateAsync({
           category_id: savingCat.id,
-          monthly_limit: Number(savingsTarget.replace(/\./g, '')),
+          monthly_limit: savingsVal,
           month_year: currentMonth
         }));
       }
+
+      // Save settings to backend
+      promises.push(updateSettingsMutation.mutateAsync({
+        ai_enabled: isAiActive,
+        notif_high_spending: notifHighSpending,
+        notif_low_balance: notifLowBalance,
+      }));
 
       await Promise.all(promises);
       showToast('Pengaturan anggaran berhasil disimpan!', 'success');
@@ -137,8 +176,10 @@ export function BudgetSettingsPage() {
                     type="text" 
                     value={fixedIncome}
                     onChange={handleFixedIncomeChange}
-                    className="w-full border-4 border-black rounded-2xl p-4 font-black text-xl focus:bg-[#D4FF00] outline-none transition-colors" 
+                    placeholder="Masukkan pemasukan tetap"
+                    className={`w-full border-4 rounded-2xl p-4 font-black text-xl focus:bg-[#D4FF00] outline-none transition-colors ${validationErrors.income ? 'border-[#B22222] bg-red-50' : 'border-black'}`} 
                   />
+                  {validationErrors.income && <p className="text-[10px] font-bold text-[#B22222] mt-1 uppercase">Wajib diisi</p>}
                 </div>
                 
                 <div>
@@ -149,8 +190,10 @@ export function BudgetSettingsPage() {
                     type="text" 
                     value={savingsTarget}
                     onChange={handleSavingsTargetChange}
-                    className="w-full border-4 border-black rounded-2xl p-4 font-black text-xl focus:bg-[#D4FF00] outline-none transition-colors" 
+                    placeholder="Masukkan target tabungan"
+                    className={`w-full border-4 rounded-2xl p-4 font-black text-xl focus:bg-[#D4FF00] outline-none transition-colors ${validationErrors.savings ? 'border-[#B22222] bg-red-50' : 'border-black'}`} 
                   />
+                  {validationErrors.savings && <p className="text-[10px] font-bold text-[#B22222] mt-1 uppercase">Wajib diisi</p>}
                 </div>
               </div>
 
@@ -173,14 +216,14 @@ export function BudgetSettingsPage() {
                   <p className="font-black uppercase text-sm">Peringatan Pengeluaran Tinggi</p>
                   <p className="text-[10px] font-bold text-slate-500 uppercase italic">Kirim notifikasi jika transaksi {'>'} Rp 500.000</p>
                 </div>
-                <input type="checkbox" className="w-8 h-8 border-4 border-black rounded-2xl checked:bg-[#4ade80] appearance-none cursor-pointer relative checked:after:content-['✓'] checked:after:absolute checked:after:left-1 checked:after:top-0 checked:after:text-black checked:after:font-bold" defaultChecked />
+                <input type="checkbox" checked={notifHighSpending} onChange={(e) => setNotifHighSpending(e.target.checked)} className="w-8 h-8 border-4 border-black rounded-2xl checked:bg-[#4ade80] appearance-none cursor-pointer relative checked:after:content-['✓'] checked:after:absolute checked:after:left-1 checked:after:top-0 checked:after:text-black checked:after:font-bold" />
               </div>
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                   <p className="font-black uppercase text-sm">Prediksi Saldo Rendah</p>
                   <p className="text-[10px] font-bold text-slate-500 uppercase italic">Ingatkan jika AI memprediksi saldo habis dalam 5 hari.</p>
                 </div>
-                <input type="checkbox" className="w-8 h-8 border-4 border-black rounded-2xl checked:bg-[#4ade80] appearance-none cursor-pointer relative checked:after:content-['✓'] checked:after:absolute checked:after:left-1 checked:after:top-0 checked:after:text-black checked:after:font-bold" defaultChecked />
+                <input type="checkbox" checked={notifLowBalance} onChange={(e) => setNotifLowBalance(e.target.checked)} className="w-8 h-8 border-4 border-black rounded-2xl checked:bg-[#4ade80] appearance-none cursor-pointer relative checked:after:content-['✓'] checked:after:absolute checked:after:left-1 checked:after:top-0 checked:after:text-black checked:after:font-bold" />
               </div>
             </div>
           </div>
