@@ -194,6 +194,7 @@ export function BudgetSettingsPage() {
                     className={`w-full border-4 rounded-2xl p-4 font-black text-xl focus:bg-[#D4FF00] outline-none transition-colors ${validationErrors.savings ? 'border-[#B22222] bg-red-50' : 'border-black'}`} 
                   />
                   {validationErrors.savings && <p className="text-[10px] font-bold text-[#B22222] mt-1 uppercase">Wajib diisi</p>}
+                  <p className="text-[9px] font-bold text-slate-500 mt-1 uppercase italic">Jumlah yang ingin Anda sisihkan untuk ditabung setiap bulan.</p>
                 </div>
               </div>
 
