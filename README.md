@@ -1,4 +1,4 @@
-<![CDATA[# 🚀 FinPredict — AI-Powered Cash Flow Forecasting
+# 🚀 FinPredict — AI-Powered Cash Flow Forecasting
 
 <div align="center">
 
@@ -76,7 +76,7 @@ Memprediksi risiko *overspending* dalam 30 hari ke depan menggunakan model **LST
 
 ## 🏗️ Arsitektur Sistem
 
-```
+```text
 ┌─────────────────┐     ┌──────────────────┐     ┌──────────────────┐
 │                 │     │                  │     │                  │
 │   Frontend      │────▶│   Backend API    │────▶│   AI Service     │
@@ -138,7 +138,7 @@ Memprediksi risiko *overspending* dalam 30 hari ke depan menggunakan model **LST
 ## 🧠 AI/ML Pipeline
 
 ### Model Architecture
-```
+```text
 LSTM(64) → Dropout(0.2) → LSTM(32) → Dropout(0.2) → Dense(16) → Dense(1, sigmoid)
 ```
 
@@ -181,7 +181,7 @@ LSTM(64) → Dropout(0.2) → LSTM(32) → Dropout(0.2) → Dense(16) → Dense(
 </details>
 
 ### Feature Engineering Pipeline
-```
+```text
 Transaksi Historis (60 hari)
     ↓
 buildDailyTimeSeries() → Agregasi harian per INCOME/EXPENSE
@@ -201,7 +201,7 @@ Simpan ke tabel ai_analysis_results & ai_predictions
 
 ## 📁 Struktur Proyek
 
-```
+```text
 FinPredict/
 ├── frontend/                    # React + Vite (Deployed ke Vercel)
 │   ├── src/
@@ -358,7 +358,7 @@ VITE_API_URL=https://your-backend.railway.app/api
 
 Backend menyediakan dokumentasi OpenAPI/Swagger yang dapat diakses di:
 
-```
+```text
 https://your-backend-url/api-docs
 ```
 
@@ -408,7 +408,7 @@ https://your-backend-url/api-docs
 
 ## 📊 Database Schema
 
-```
+```text
 profiles          → User data + settings (ai_enabled, notif preferences)
 categories        → Kategori transaksi (INCOME / EXPENSE)
 transactions      → Transaksi keuangan pengguna
@@ -431,4 +431,3 @@ Proyek ini dibuat untuk keperluan **Capstone Project** pendidikan.
 Developed with ❤️ by [Saifuloh](https://github.com/saifulohyr)
 
 </div>
-]]>
