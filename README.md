@@ -152,6 +152,8 @@ LSTM(64) → Dropout(0.2) → LSTM(32) → Dropout(0.2) → Dense(16) → Dense(
 | Model File | `model_lstm.h5` |
 | Scaler File | `scalers_v8.pkl` |
 
+> 📦 **Download Model Files:** [Google Drive — FinPredict Models](https://drive.google.com/drive/folders/1nkWo7Jp-6dY-znAAgqHLmMRyJBMCpjHc?usp=sharing)
+
 ### 37 Fitur Input LSTM
 
 <details>
@@ -297,6 +299,12 @@ npm run dev
 ```
 
 ### 4. Setup AI Service (Opsional)
+
+> 📦 **Download model files** dari Google Drive dan letakkan di folder `ai-service/`:  
+> 🔗 [https://drive.google.com/drive/folders/1nkWo7Jp-6dY-znAAgqHLmMRyJBMCpjHc?usp=sharing](https://drive.google.com/drive/folders/1nkWo7Jp-6dY-znAAgqHLmMRyJBMCpjHc?usp=sharing)
+>
+> File yang dibutuhkan: `model_lstm.h5`, `scalers_v8.pkl`
+
 ```bash
 cd ai-service
 pip install -r requirements.txt
