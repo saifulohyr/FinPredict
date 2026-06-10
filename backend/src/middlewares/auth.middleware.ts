@@ -1,14 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import { supabase } from '../config/supabase';
 
-/**
- * Shape of the decoded Supabase JWT payload stored in req.user.
- */
+// Shape of the decoded Supabase JWT payload stored in req.user
 export interface SupabaseJwtPayload {
-  /** Supabase user UUID */
   sub: string;
   email?: string;
-  /** user_metadata from Supabase (contains full_name, avatar_url, etc.) */
   user_metadata?: {
     full_name?: string;
     avatar_url?: string;
@@ -19,7 +15,6 @@ export interface SupabaseJwtPayload {
   exp?: number;
 }
 
-// Extend Express Request to include user payload
 declare global {
   namespace Express {
     interface Request {
@@ -28,10 +23,8 @@ declare global {
   }
 }
 
-/**
- * Middleware that validates the Supabase JWT from the Authorization header.
- * On success it attaches the user payload to `req.user`.
- */
+// Validates the Supabase JWT from the Authorization header.
+// On success, attaches the user payload to req.user.
 export const requireAuth = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const authHeader = req.headers.authorization;
@@ -45,11 +38,10 @@ export const requireAuth = async (req: Request, res: Response, next: NextFunctio
     }
 
     const token = authHeader.split(' ')[1];
-
     const { data, error } = await supabase.auth.getUser(token);
 
     if (error || !data.user) {
-      console.error('❌ requireAuth error:', error?.message);
+      console.error('[Auth] Token validation failed:', error?.message);
       res.status(401).json({ status: 'error', message: 'Invalid token.' });
       return;
     }
@@ -62,7 +54,7 @@ export const requireAuth = async (req: Request, res: Response, next: NextFunctio
 
     next();
   } catch (error: unknown) {
-    console.error('❌ requireAuth error:', error);
+    console.error('[Auth] Middleware error:', error);
     res.status(500).json({ status: 'error', message: 'Authentication failed.' });
   }
 };

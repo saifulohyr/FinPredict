@@ -4,9 +4,7 @@ import { getBudgets } from './budget.service';
 
 const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
 
-// ============================================================================
-// QUERY HELPERS
-// ============================================================================
+// --- Query Helpers ---
 
 export const getLatestPredictions = async (userId: string) => {
   const predictions = await prisma.aiPrediction.findMany({
@@ -32,9 +30,8 @@ export const getLatestAiAnalysisResult = async (userId: string) => {
   });
 };
 
-// ============================================================================
-// FEATURE ENGINEERING — Hitung 37 fitur LSTM dari transaksi historis
-// ============================================================================
+// --- Feature Engineering ---
+// Calculates 37 LSTM features from historical transactions
 
 interface DailyData {
   date: Date;
@@ -219,9 +216,8 @@ function buildFeatureSequence(dailySeries: DailyData[]): Array<Record<string, nu
   return features;
 }
 
-// ============================================================================
-// MAIN GENERATE PREDICTION — Uses real feature engineering + AI service
-// ============================================================================
+// --- Main Prediction Generator ---
+// Uses feature engineering and calls external AI service
 
 export const generatePrediction = async (userId: string) => {
   const now = new Date();
@@ -261,7 +257,7 @@ export const generatePrediction = async (userId: string) => {
     
     if (response.ok) {
       aiResult = await response.json();
-      console.log('✅ AI Service Prediction:', JSON.stringify({
+      console.log('[Prediction] AI Service Prediction:', JSON.stringify({
         prediksi_besok: aiResult.prediksi_besok,
         probabilitas: aiResult.probabilitas,
         status_warning: aiResult.status_warning,
@@ -269,10 +265,10 @@ export const generatePrediction = async (userId: string) => {
       }));
     } else {
       const errorText = await response.text();
-      console.error('❌ AI Service Error:', errorText);
+      console.error('[Prediction] AI Service Error:', errorText);
     }
   } catch (error) {
-    console.error('⚠️ Failed to call AI Service. Is the server running?', error);
+    console.error('[Prediction] Failed to call AI Service. Is the server running?', error);
   }
 
   // 5. Save AI Analysis Result to database
@@ -365,7 +361,7 @@ export const generatePrediction = async (userId: string) => {
     const existingWarning = await prisma.notification.findFirst({
       where: {
         user_id: userId,
-        title: '⚠️ AI Peringatan: Risiko Overspending',
+        title: 'Peringatan AI: Risiko Overspending',
         created_at: { gte: startOfDay },
       }
     });
@@ -373,7 +369,7 @@ export const generatePrediction = async (userId: string) => {
     if (!existingWarning) {
       await createNotification(
         userId,
-        '⚠️ AI Peringatan: Risiko Overspending',
+        'Peringatan AI: Risiko Overspending',
         aiResult.rekomendasi || `AI mendeteksi kemungkinan besar Anda akan melakukan overspending besok. Harap rem pengeluaran Anda!`,
         'DANGER'
       );
@@ -388,7 +384,7 @@ export const generatePrediction = async (userId: string) => {
     const existingInfo = await prisma.notification.findFirst({
       where: {
         user_id: userId,
-        title: '✅ AI Analisis: Keuangan Aman',
+        title: 'Analisis AI: Keuangan Aman',
         created_at: { gte: startOfDay },
       }
     });
@@ -396,7 +392,7 @@ export const generatePrediction = async (userId: string) => {
     if (!existingInfo) {
       await createNotification(
         userId,
-        '✅ AI Analisis: Keuangan Aman',
+        'Analisis AI: Keuangan Aman',
         aiResult.rekomendasi || 'AI memprediksi keuangan Anda aman untuk besok. Pertahankan pola ini!',
         'INFO'
       );
@@ -409,9 +405,7 @@ export const generatePrediction = async (userId: string) => {
   return await getLatestPredictions(userId);
 };
 
-// ============================================================================
-// BUDGET-BASED EARLY WARNING (unchanged logic)
-// ============================================================================
+// --- Budget-Based Early Warning ---
 
 export const checkEarlyWarning = async (userId: string) => {
   const now = new Date();
@@ -457,7 +451,7 @@ export const checkEarlyWarning = async (userId: string) => {
     const existingWarning = await prisma.notification.findFirst({
       where: {
         user_id: userId,
-        title: '⚠️ Early Warning: Potensi Overspending!',
+        title: 'Peringatan Dini: Potensi Overspending!',
         created_at: { gte: startOfDay },
       }
     });
@@ -465,7 +459,7 @@ export const checkEarlyWarning = async (userId: string) => {
     if (!existingWarning) {
       await createNotification(
         userId,
-        '⚠️ Early Warning: Potensi Overspending!',
+        'Peringatan Dini: Potensi Overspending!',
         `Prediksi total pengeluaran bulan ini sebesar Rp ${projectedTotal.toLocaleString('id-ID')} (${overagePercentage}% melebihi anggaran Rp ${totalBudget.toLocaleString('id-ID')}). Segera evaluasi pola pengeluaran Anda.`,
         'WARNING'
       );

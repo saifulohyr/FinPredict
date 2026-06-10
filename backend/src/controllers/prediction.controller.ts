@@ -19,7 +19,7 @@ export const generatePrediction = async (req: Request, res: Response): Promise<v
     });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown error';
-    console.error('❌ generatePrediction error:', message);
+    console.error('[Prediction] generatePrediction error:', message);
     res.status(500).json({ status: 'error', message });
   }
 };
@@ -39,7 +39,7 @@ export const getPredictions = async (req: Request, res: Response): Promise<void>
     });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown error';
-    console.error('❌ getPredictions error:', message);
+    console.error('[Prediction] getPredictions error:', message);
     res.status(500).json({ status: 'error', message });
   }
 };
@@ -55,7 +55,7 @@ export const getWarningStatus = async (req: Request, res: Response): Promise<voi
     });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown error';
-    console.error('❌ getWarningStatus error:', message);
+    console.error('[Prediction] getWarningStatus error:', message);
     res.status(500).json({ status: 'error', message });
   }
 };
@@ -71,7 +71,7 @@ export const getAiAnalysisResult = async (req: Request, res: Response): Promise<
     });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown error';
-    console.error('❌ getAiAnalysisResult error:', message);
+    console.error('[Prediction] getAiAnalysisResult error:', message);
     res.status(500).json({ status: 'error', message });
   }
 };

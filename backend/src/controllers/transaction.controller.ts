@@ -24,7 +24,7 @@ export const createTransaction = async (req: Request, res: Response): Promise<vo
       return;
     }
     const message = error instanceof Error ? error.message : 'Unknown error';
-    console.error('❌ createTransaction error:', message);
+    console.error('[Transaction] createTransaction error:', message);
     res.status(500).json({ status: 'error', message });
   }
 };
@@ -42,7 +42,7 @@ export const getTransactions = async (req: Request, res: Response): Promise<void
     res.json({ status: 'success', data: transactions });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown error';
-    console.error('❌ getTransactions error:', message);
+    console.error('[Transaction] getTransactions error:', message);
     res.status(500).json({ status: 'error', message });
   }
 };
@@ -60,7 +60,7 @@ export const getTransactionById = async (req: Request, res: Response): Promise<v
     res.json({ status: 'success', data: transaction });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown error';
-    console.error('❌ getTransactionById error:', message);
+    console.error('[Transaction] getTransactionById error:', message);
     res.status(500).json({ status: 'error', message });
   }
 };
@@ -83,7 +83,7 @@ export const updateTransaction = async (req: Request, res: Response): Promise<vo
       res.status(404).json({ status: 'error', message });
       return;
     }
-    console.error('❌ updateTransaction error:', message);
+    console.error('[Transaction] updateTransaction error:', message);
     res.status(500).json({ status: 'error', message });
   }
 };
@@ -101,7 +101,7 @@ export const deleteTransaction = async (req: Request, res: Response): Promise<vo
       res.status(404).json({ status: 'error', message });
       return;
     }
-    console.error('❌ deleteTransaction error:', message);
+    console.error('[Transaction] deleteTransaction error:', message);
     res.status(500).json({ status: 'error', message });
   }
 };
@@ -116,7 +116,7 @@ export const getSummary = async (req: Request, res: Response): Promise<void> => 
     res.json({ status: 'success', data: summary });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown error';
-    console.error('❌ getSummary error:', message);
+    console.error('[Transaction] getSummary error:', message);
     res.status(500).json({ status: 'error', message });
   }
 };
@@ -142,7 +142,7 @@ export const importFromCsv = async (req: Request, res: Response): Promise<void> 
     });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown error';
-    console.error('❌ importFromCsv error:', message);
+    console.error('[Transaction] importFromCsv error:', message);
     res.status(500).json({ status: 'error', message });
   }
 };

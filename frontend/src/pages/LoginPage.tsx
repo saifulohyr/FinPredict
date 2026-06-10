@@ -23,15 +23,15 @@ export function LoginPage() {
       if (isLogin) {
         const response = await api.post('/auth/login', { email, password });
         if (response.data.status === 'success') {
-          const { user, access_token } = response.data.data;
-          setAuth(user, access_token);
+          const { user, access_token, refresh_token } = response.data.data;
+          setAuth(user, access_token, refresh_token);
           navigate('/');
         }
       } else {
         const response = await api.post('/auth/register', { email, password, full_name: fullName });
         if (response.data.status === 'success') {
-          const { user, access_token } = response.data.data;
-          setAuth(user, access_token);
+          const { user, access_token, refresh_token } = response.data.data;
+          setAuth(user, access_token, refresh_token);
           navigate('/');
         }
       }

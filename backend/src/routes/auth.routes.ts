@@ -137,6 +137,34 @@ router.post('/register', authController.register);
  */
 router.post('/login', authController.login);
 
+/**
+ * @openapi
+ * /auth/refresh:
+ *   post:
+ *     tags: [Auth]
+ *     summary: Refresh access token
+ *     description: |
+ *       Uses a valid refresh_token to obtain a new access_token and refresh_token pair.
+ *       This is a public endpoint (no Authorization header required).
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [refresh_token]
+ *             properties:
+ *               refresh_token:
+ *                 type: string
+ *                 description: The refresh token obtained from login or previous refresh
+ *     responses:
+ *       200:
+ *         description: Token refreshed successfully
+ *       401:
+ *         description: Invalid or expired refresh token
+ */
+router.post('/refresh', authController.refreshToken);
+
 // ============================================================
 // PROTECTED ENDPOINTS (Token required via Authorization header)
 // ============================================================

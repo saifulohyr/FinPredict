@@ -20,7 +20,7 @@ export function Layout({ children }: { children: ReactNode }) {
         </main>
       </div>
 
-      {/* Overlay untuk mobile */}
+      {/* Mobile overlay */}
       {isSidebarOpen && (
         <div 
           className="fixed inset-0 bg-black/50 z-40 md:hidden" 

@@ -10,7 +10,7 @@ export const getAllCategories = async (req: Request, res: Response): Promise<voi
     });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown error';
-    console.error('❌ getAllCategories error:', message);
+    console.error('[Category] getAllCategories error:', message);
     res.status(500).json({ status: 'error', message });
   }
 };

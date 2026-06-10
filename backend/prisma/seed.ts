@@ -4,7 +4,7 @@ import { PrismaClient, CategoryType } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🌱 Sedang mengisi data kategori...');
+  console.log('[Seed] Sedang mengisi data kategori...');
 
   const categories = [
     // --- PEMASUKAN (INCOME) ---
@@ -36,13 +36,13 @@ async function main() {
       await prisma.category.create({
         data: category,
       });
-      console.log(`✅ Kategori dibuat: ${category.name}`);
+      console.log(`[Seed] Kategori dibuat: ${category.name}`);
     } else {
-      console.log(`⏩ Kategori sudah ada: ${category.name}`);
+      console.log(`[Seed] Kategori sudah ada: ${category.name}`);
     }
   }
 
-  console.log('✨ Berhasil sinkronisasi 12 kategori default.');
+  console.log('[Seed] Berhasil sinkronisasi 12 kategori default.');
 }
 
 main()

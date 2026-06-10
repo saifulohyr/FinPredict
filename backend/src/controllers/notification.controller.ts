@@ -12,7 +12,7 @@ export const getNotifications = async (req: Request, res: Response): Promise<voi
     });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown error';
-    console.error('❌ getNotifications error:', message);
+    console.error('[Notification] getNotifications error:', message);
     res.status(500).json({ status: 'error', message });
   }
 };
@@ -34,7 +34,7 @@ export const markAsRead = async (req: Request, res: Response): Promise<void> => 
       res.status(404).json({ status: 'error', message });
       return;
     }
-    console.error('❌ markAsRead error:', message);
+    console.error('[Notification] markAsRead error:', message);
     res.status(500).json({ status: 'error', message });
   }
 };

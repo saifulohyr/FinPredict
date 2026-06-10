@@ -7,14 +7,14 @@ const PORT = process.env.PORT || 5000;
 async function main() {
   try {
     await prisma.$connect();
-    console.log('✅ Database connected successfully');
+    console.log('[DB] Connected successfully');
   } catch (error) {
-    console.error('⚠️ Database connection failed. Some features may not work.', error);
+    console.error('[DB] Connection failed. Some features may not work.', error);
   }
   
   app.listen(PORT, () => {
-    console.log(`🚀 Server is running on port ${PORT}`);
-    console.log(`📚 API Docs: http://localhost:${PORT}/api-docs`);
+    console.log(`[Server] Running on port ${PORT}`);
+    console.log(`[Docs] http://localhost:${PORT}/api-docs`);
   });
 }
 

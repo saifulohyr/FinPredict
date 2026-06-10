@@ -25,7 +25,7 @@ export const getBudgets = async (req: Request, res: Response): Promise<void> => 
     });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown error';
-    console.error('❌ getBudgets error:', message);
+    console.error('[Budget] getBudgets error:', message);
     res.status(500).json({ status: 'error', message });
   }
 };
@@ -56,7 +56,7 @@ export const upsertBudget = async (req: Request, res: Response): Promise<void> =
       res.status(404).json({ status: 'error', message });
       return;
     }
-    console.error('❌ upsertBudget error:', message);
+    console.error('[Budget] upsertBudget error:', message);
     res.status(500).json({ status: 'error', message });
   }
 };
@@ -78,7 +78,7 @@ export const getBudgetStatus = async (req: Request, res: Response): Promise<void
     });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown error';
-    console.error('❌ getBudgetStatus error:', message);
+    console.error('[Budget] getBudgetStatus error:', message);
     res.status(500).json({ status: 'error', message });
   }
 };

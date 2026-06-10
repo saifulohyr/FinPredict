@@ -1,9 +1,9 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from 'express';
 
 export const notFoundHandler = (_req: Request, res: Response) => {
   res.status(404).json({
-    status: "error",
-    message: "Route not found",
+    status: 'error',
+    message: 'Route not found',
   });
 };
 
@@ -13,13 +13,13 @@ export const errorHandler = (
   res: Response,
   _next: NextFunction
 ) => {
-  console.error("❌ Error:", err.message);
+  console.error('[Error]', err.message);
 
   res.status(500).json({
-    status: "error",
+    status: 'error',
     message:
-      process.env.NODE_ENV === "production"
-        ? "Internal server error"
+      process.env.NODE_ENV === 'production'
+        ? 'Internal server error'
         : err.message,
   });
 };

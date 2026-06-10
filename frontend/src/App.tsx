@@ -32,9 +32,9 @@ function App() {
             <Layout>
               <Routes>
                 <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/transactions" element={<TransactionPage/>} />
-                <Route path="/budgets" element={<BudgetSettingsPage/>} />
-                <Route path="/analytics" element={<AIAnalyticsPage/>} />
+                <Route path="/transactions" element={<TransactionPage />} />
+                <Route path="/budgets" element={<BudgetSettingsPage />} />
+                <Route path="/analytics" element={<AIAnalyticsPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/support" element={<SupportPage />} />
               </Routes>

@@ -23,7 +23,6 @@ Thumbs.db
 # Logs
 *.log
 npm-debug.log*
-frontend/auth_guide.md
 
 # AI service - exclude notebook and large unused models, keep deployed files
 ai-service/generator_FIXipynb.ipynb

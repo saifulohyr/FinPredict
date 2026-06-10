@@ -4,3 +4,7 @@ dist/
 *.log
 
 /src/generated/prisma
+prisma/seed.js
+prisma/seed.d.ts
+prisma/seed.js.map
+prisma/seed.d.ts.map
